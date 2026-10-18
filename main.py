@@ -204,13 +204,25 @@ def send_notification(send_key, success_count):
 
 def main():
     try:
+        # 默认基础源
         source_urls = [
             "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
-            "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
-            "https://raw.githubusercontent.com/free18/v2ray/main/c.yaml",
-            "https://raw.githubusercontent.com/zhuhaiuk/free-nodes/main/clash_config.yaml"
+            "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml"
         ]
         
+        # 自动读取 123.txt 中的扩展外部订阅源
+        if os.path.exists("123.txt"):
+            try:
+                with open("123.txt", "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#"):
+                            if line not in source_urls:
+                                source_urls.append(line)
+                print(f"📄 已成功加载 123.txt 外部源，当前总源数: {len(source_urls)}")
+            except Exception as e:
+                print(f"⚠️ 读取 123.txt 异常: {e}")
+
         merged_proxies = []
         for url in source_urls:
             print(f"📥 正在抓取源: {url}")
