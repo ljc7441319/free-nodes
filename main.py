@@ -54,6 +54,15 @@ def batch_get_locations(proxies):
 
     return proxies
 
+def test_tcp_latency(server, port, timeout=3):
+    start_time = time.time()
+    try:
+        with socket.create_connection((server, int(port)), timeout=timeout):
+            latency = (time.time() - start_time) * 1000
+            return round(latency, 2)
+    except Exception:
+        return None
+
 def generate_advanced_clash_config(valid_proxies, country_groups):
     country_group_names = list(country_groups.keys())
     all_proxy_names = [p['name'] for p in valid_proxies]
@@ -268,7 +277,6 @@ def main():
         generate_v2ray_subscription(valid_proxies, "sub/v2ray.txt")
         print("💾 V2Ray 文件已写入 sub/v2ray.txt")
 
-        # 核心逻辑：只有在手动触发 (workflow_dispatch) 时才发送微信推送，定时任务静默运行不打扰
         event_name = os.environ.get("GITHUB_EVENT_NAME", "")
         if event_name == "workflow_dispatch":
             send_notification(os.environ.get("SEND_KEY"), len(valid_proxies))
