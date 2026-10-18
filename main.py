@@ -54,15 +54,6 @@ def batch_get_locations(proxies):
 
     return proxies
 
-def test_tcp_latency(server, port, timeout=3):
-    start_time = time.time()
-    try:
-        with socket.create_connection((server, int(port)), timeout=timeout):
-            latency = (time.time() - start_time) * 1000
-            return round(latency, 2)
-    except Exception:
-        return None
-
 def generate_advanced_clash_config(valid_proxies, country_groups):
     country_group_names = list(country_groups.keys())
     all_proxy_names = [p['name'] for p in valid_proxies]
@@ -93,7 +84,7 @@ def generate_advanced_clash_config(valid_proxies, country_groups):
             "tolerance": 50
         })
 
-   streaming_groups = [
+    streaming_groups = [
         {"name": "🎬 奈飞视频", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
         {"name": "📺 YouTube", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
         {"name": "✈️ 电报消息", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
