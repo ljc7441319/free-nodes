@@ -8,6 +8,47 @@ import urllib.parse
 import requests
 import yaml
 
+# 失败统计配置：用于跨多次运行自动记录并淘汰长期失效的源
+STATS_FILE = "source_stats.json"
+MAX_FAIL_COUNT = 3  # 连续失败达到 3 次后自动从 123.txt 中剔除
+
+def load_failure_stats():
+    if os.path.exists(STATS_FILE):
+        try:
+            with open(STATS_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            pass
+    return {}
+
+def save_failure_stats(stats):
+    try:
+        with open(STATS_FILE, "w", encoding="utf-8") as f:
+            json.dump(stats, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"⚠️ 保存统计状态异常: {e}")
+
+def update_123_txt_file(removed_urls):
+    """当源连续失败超限时，自动从 123.txt 中移除该行"""
+    if not os.path.exists("123.txt") or not removed_urls:
+        return
+    try:
+        with open("123.txt", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+        
+        new_lines = []
+        for line in lines:
+            clean_line = line.strip()
+            if clean_line in removed_urls:
+                print(f"🗑️ 已自动从 123.txt 中淘汰并清理失效源: {clean_line}")
+                continue
+            new_lines.append(line)
+            
+        with open("123.txt", "w", encoding="utf-8") as f:
+            f.writelines(new_lines)
+    except Exception as e:
+        print(f"⚠️ 更新 123.txt 失败: {e}")
+
 def country_code_to_emoji(country_code):
     if not country_code or len(country_code) != 2:
         return "🏳️"
@@ -93,6 +134,7 @@ def generate_advanced_clash_config(valid_proxies, country_groups):
             "tolerance": 50
         })
 
+    # 已彻底解耦嵌套，修复 loop is detected in ProxyGroup 错误
     streaming_groups = [
         {"name": "🎬 奈飞视频", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
         {"name": "📺 YouTube", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
@@ -204,6 +246,9 @@ def send_notification(send_key, success_count):
 
 def main():
     try:
+        failure_stats = load_failure_stats()
+        removed_sources = []
+
         # 默认基础源
         source_urls = [
             "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
@@ -219,22 +264,70 @@ def main():
                         if line and not line.startswith("#"):
                             if line not in source_urls:
                                 source_urls.append(line)
-                print(f"📄 已成功加载 123.txt 外部源，当前总源数: {len(source_urls)}")
+                print(f"📄 已成功加载 123.txt 外部源，待检查总源数: {len(source_urls)}")
             except Exception as e:
                 print(f"⚠️ 读取 123.txt 异常: {e}")
 
         merged_proxies = []
+        source_health_report = []
+
         for url in source_urls:
-            print(f"📥 正在抓取源: {url}")
+            print(f"\n📥 正在检查并抓取源: {url}")
+            start_t = time.time()
+            source_info = {"url": url, "status": "未知", "nodes": 0, "latency": 0}
+            is_success = False
+            
             try:
                 res = requests.get(url, timeout=15)
+                source_info["latency"] = round((time.time() - start_t) * 1000, 2)
+                
                 if res.status_code == 200:
                     data = yaml.safe_load(res.text)
                     if data and isinstance(data, dict) and 'proxies' in data:
+                        node_count = len(data['proxies'])
                         merged_proxies.extend(data['proxies'])
-                        print(f"✅ 成功获取到 {len(data['proxies'])} 个节点")
+                        source_info["status"] = "🟢 正常可用"
+                        source_info["nodes"] = node_count
+                        is_success = True
+                        print(f"✅ [健康] 抓取成功 | 耗时: {source_info['latency']}ms | 贡献有效节点: {node_count}个")
+                    else:
+                        source_info["status"] = "🟡 格式异常(无proxies字段)"
+                        print(f"⚠️ [警告] 格式错误: 未检测到 clash 节点列表")
+                else:
+                    source_info["status"] = f"🔴 HTTP失效({res.status_code})"
+                    print(f"❌ [失效] 状态码异常: {res.status_code}")
+                    
             except Exception as e:
-                print(f"⚠️ 抓取异常: {e}")
+                source_info["status"] = "⏱️ 连接超时或解析失败"
+                print(f"⏱️ [错误] 抓取异常: {e}")
+            
+            # 失败统计与自动淘汰机制
+            current_fails = failure_stats.get(url, 0)
+            if is_success:
+                failure_stats[url] = 0
+            else:
+                current_fails += 1
+                failure_stats[url] = current_fails
+                print(f"⚠️ [警告] 该源连续失败次数: {current_fails}/{MAX_FAIL_COUNT}")
+                
+                if current_fails >= MAX_FAIL_COUNT:
+                    print(f"🚨 [淘汰] 订阅源 {url} 连续失败超过 {MAX_FAIL_COUNT} 次，将自动剔除！")
+                    removed_sources.append(url)
+                    failure_stats.pop(url, None)
+
+            source_health_report.append(source_info)
+
+        save_failure_stats(failure_stats)
+        if removed_sources:
+            update_123_txt_file(removed_sources)
+
+        print("\n" + "="*40)
+        print("📊 订阅源健康检查汇总报告")
+        print("="*40)
+        for item in source_health_report:
+            print(f"• 🔗 链接: {item['url']}")
+            print(f"  状态: {item['status']} | 耗时: {item['latency']}ms | 节点数: {item['nodes']}")
+        print("="*40 + "\n")
 
         if not merged_proxies:
             print("❌ 未能获取到任何有效原始节点。")
@@ -244,7 +337,6 @@ def main():
         proxies_with_geo = batch_get_locations(merged_proxies)
 
         print("⚡ 开始并发 TCP 测速...")
-        valid_proxies = []
         def check_node(proxy):
             server = proxy.get('server')
             port = proxy.get('port')
