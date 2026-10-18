@@ -93,12 +93,12 @@ def generate_advanced_clash_config(valid_proxies, country_groups):
             "tolerance": 50
         })
 
-    streaming_groups = [
-        {"name": "🎬 奈飞视频", "type": "select", "proxies": ["🚀 节点选择", "♻️ 自动选择"] + country_group_names},
-        {"name": "📺 YouTube", "type": "select", "proxies": ["🚀 节点选择", "♻️ 自动选择"] + country_group_names},
-        {"name": "✈️ 电报消息", "type": "select", "proxies": ["🚀 节点选择", "♻️ 自动选择"] + country_group_names},
-        {"name": "🌍 国外媒体", "type": "select", "proxies": ["🚀 节点选择", "♻️ 自动选择"] + country_group_names},
-        {"name": "🍎 苹果服务", "type": "select", "proxies": ["🎯 全球直连", "🚀 节点选择"]},
+   streaming_groups = [
+        {"name": "🎬 奈飞视频", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
+        {"name": "📺 YouTube", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
+        {"name": "✈️ 电报消息", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
+        {"name": "🌍 国外媒体", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
+        {"name": "🍎 苹果服务", "type": "select", "proxies": ["🎯 全球直连", "♻️ 自动选择"]},
         {"name": "🎯 全球直连", "type": "select", "proxies": ["DIRECT"]}
     ]
     proxy_groups.extend(streaming_groups)
