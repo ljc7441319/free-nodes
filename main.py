@@ -8,9 +8,8 @@ import urllib.parse
 import requests
 import yaml
 
-# 失败统计配置：用于跨多次运行自动记录并淘汰长期失效的源
 STATS_FILE = "source_stats.json"
-MAX_FAIL_COUNT = 3  # 连续失败达到 3 次后自动从 123.txt 中剔除
+MAX_FAIL_COUNT = 3
 
 def load_failure_stats():
     if os.path.exists(STATS_FILE):
@@ -29,7 +28,6 @@ def save_failure_stats(stats):
         print(f"⚠️ 保存统计状态异常: {e}")
 
 def update_123_txt_file(removed_urls):
-    """当源连续失败超限时，自动从 123.txt 中移除该行"""
     if not os.path.exists("123.txt") or not removed_urls:
         return
     try:
@@ -95,7 +93,7 @@ def batch_get_locations(proxies):
 
     return proxies
 
-def test_tcp_latency(server, port, timeout=3):
+def test_tcp_latency(server, port, timeout=4):
     start_time = time.time()
     try:
         with socket.create_connection((server, int(port)), timeout=timeout):
@@ -103,6 +101,150 @@ def test_tcp_latency(server, port, timeout=3):
             return round(latency, 2)
     except Exception:
         return None
+
+# ==================== 万能订阅内容解析器 ====================
+def parse_vmess_link(link):
+    try:
+        content = link[8:]
+        padding = 4 - (len(content) % 4)
+        if padding < 4:
+            content += '=' * padding
+        decoded = base64.b64decode(content).decode('utf-8', errors='ignore')
+        data = json.loads(decoded)
+        return {
+            "name": data.get("ps", "Vmess-Node"),
+            "type": "vmess",
+            "server": data.get("add"),
+            "port": int(data.get("port", 443)),
+            "uuid": data.get("id"),
+            "alterId": int(data.get("aid", 0)),
+            "cipher": "auto",
+            "network": data.get("net", "tcp"),
+            "tls": True if data.get("tls") == "tls" else False,
+            "ws-opts": {"path": data.get("path", "/"), "headers": {"Host": data.get("host", "")}} if data.get("net") == "ws" else None
+        }
+    except Exception:
+        return None
+
+def parse_ss_link(link):
+    try:
+        part = link[5:]
+        if '#' in part:
+            part, name = part.split('#', 1)
+            name = urllib.parse.unquote(name)
+        else:
+            name = "SS-Node"
+        
+        if '@' in part:
+            user_info_b64, server_port = part.rsplit('@', 1)
+            padding = 4 - (len(user_info_b64) % 4)
+            if padding < 4:
+                user_info_b64 += '=' * padding
+            try:
+                user_info = base64.b64decode(user_info_b64).decode('utf-8', errors='ignore')
+            except:
+                user_info = user_info_b64
+                
+            if ':' in user_info:
+                cipher, password = user_info.split(':', 1)
+            else:
+                return None
+                
+            if ':' in server_port:
+                server, port = server_port.rsplit(':', 1)
+                return {
+                    "name": name,
+                    "type": "ss",
+                    "server": server,
+                    "port": int(port),
+                    "cipher": cipher,
+                    "password": password
+                }
+    except Exception:
+        return None
+    return None
+
+def parse_trojan_link(link):
+    try:
+        part = link[9:]
+        if '#' in part:
+            part, name = part.split('#', 1)
+            name = urllib.parse.unquote(name)
+        else:
+            name = "Trojan-Node"
+            
+        if '@' in part:
+            password, server_port = part.split('@', 1)
+            if '?' in server_port:
+                server_port, query = server_port.split('?', 1)
+            else:
+                query = ''
+                
+            if ':' in server_port:
+                server, port = server_port.split(':', 1)
+                sni = server
+                if query:
+                    parsed_q = urllib.parse.parse_qs(query)
+                    if 'sni' in parsed_q:
+                        sni = parsed_q['sni'][0]
+                        
+                return {
+                    "name": name,
+                    "type": "trojan",
+                    "server": server,
+                    "port": int(port),
+                    "password": password,
+                    "sni": sni,
+                    "skip-cert-verify": True
+                }
+    except Exception:
+        return None
+    return None
+
+def extract_proxies_from_content(text):
+    proxies = []
+    text_stripped = text.strip()
+    
+    # 1. 尝试作为 Clash YAML 解析
+    try:
+        data = yaml.safe_load(text_stripped)
+        if data and isinstance(data, dict) and 'proxies' in data and isinstance(data['proxies'], list):
+            return data['proxies']
+    except Exception:
+        pass
+
+    # 2. 尝试作为 Base64 订阅解码
+    raw_text = text_stripped
+    try:
+        if not text_stripped.startswith('http') and len(text_stripped) > 20:
+            padding = 4 - (len(text_stripped) % 4)
+            if padding < 4:
+                text_padded = text_stripped + '=' * padding
+            else:
+                text_padded = text_stripped
+            decoded_bytes = base64.b64decode(text_padded)
+            raw_text = decoded_bytes.decode('utf-8', errors='ignore')
+    except Exception:
+        pass
+
+    # 3. 按行解析原始代理直链 (vmess://, ss://, trojan://)
+    for line in raw_text.splitlines():
+        line = line.strip()
+        if not line or line.startswith('#'):
+            continue
+        proxy = None
+        if line.startswith('vmess://'):
+            proxy = parse_vmess_link(line)
+        elif line.startswith('ss://'):
+            proxy = parse_ss_link(line)
+        elif line.startswith('trojan://'):
+            proxy = parse_trojan_link(line)
+            
+        if proxy and proxy.get('server') and proxy.get('port'):
+            proxies.append(proxy)
+            
+    return proxies
+# ==========================================================
 
 def generate_advanced_clash_config(valid_proxies, country_groups):
     country_group_names = list(country_groups.keys())
@@ -134,7 +276,6 @@ def generate_advanced_clash_config(valid_proxies, country_groups):
             "tolerance": 50
         })
 
-    # 已彻底解耦嵌套，修复 loop is detected in ProxyGroup 错误
     streaming_groups = [
         {"name": "🎬 奈飞视频", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
         {"name": "📺 YouTube", "type": "select", "proxies": ["♻️ 自动选择"] + country_group_names},
@@ -219,7 +360,7 @@ def send_notification(send_key, success_count):
     url = f"https://sctapi.ftqq.com/{send_key}.send"
     
     desp = (
-        "### 🟢 免费节点自动更新报告\n"
+        "### 🟢 免费节点自动更新报告（重构高产版）\n"
         f"- **有效可用节点数**: `{success_count}` 个\n"
         "- **触发方式**: 手动触发推送\n\n"
         "---\n\n"
@@ -234,7 +375,7 @@ def send_notification(send_key, success_count):
     )
 
     params = {
-        "title": "Free Nodes Manual Update Success",
+        "title": f"Free Nodes Success: {success_count} Nodes",
         "desp": desp
     }
 
@@ -249,13 +390,11 @@ def main():
         failure_stats = load_failure_stats()
         removed_sources = []
 
-        # 默认基础源
         source_urls = [
             "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
             "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml"
         ]
         
-        # 自动读取 123.txt 中的扩展外部订阅源
         if os.path.exists("123.txt"):
             try:
                 with open("123.txt", "r", encoding="utf-8") as f:
@@ -282,17 +421,17 @@ def main():
                 source_info["latency"] = round((time.time() - start_t) * 1000, 2)
                 
                 if res.status_code == 200:
-                    data = yaml.safe_load(res.text)
-                    if data and isinstance(data, dict) and 'proxies' in data:
-                        node_count = len(data['proxies'])
-                        merged_proxies.extend(data['proxies'])
+                    extracted = extract_proxies_from_content(res.text)
+                    if extracted:
+                        node_count = len(extracted)
+                        merged_proxies.extend(extracted)
                         source_info["status"] = "🟢 正常可用"
                         source_info["nodes"] = node_count
                         is_success = True
-                        print(f"✅ [健康] 抓取成功 | 耗时: {source_info['latency']}ms | 贡献有效节点: {node_count}个")
+                        print(f"✅ [健康] 解析成功 | 耗时: {source_info['latency']}ms | 有效节点: {node_count}个")
                     else:
-                        source_info["status"] = "🟡 格式异常(无proxies字段)"
-                        print(f"⚠️ [警告] 格式错误: 未检测到 clash 节点列表")
+                        source_info["status"] = "🟡 解析无有效节点"
+                        print(f"⚠️ [警告] 链接可达但未解析出有效节点")
                 else:
                     source_info["status"] = f"🔴 HTTP失效({res.status_code})"
                     print(f"❌ [失效] 状态码异常: {res.status_code}")
@@ -301,7 +440,6 @@ def main():
                 source_info["status"] = "⏱️ 连接超时或解析失败"
                 print(f"⏱️ [错误] 抓取异常: {e}")
             
-            # 失败统计与自动淘汰机制
             current_fails = failure_stats.get(url, 0)
             if is_success:
                 failure_stats[url] = 0
@@ -333,7 +471,7 @@ def main():
             print("❌ 未能获取到任何有效原始节点。")
             return
 
-        print(f"🌐 共有原始节点 {len(merged_proxies)} 个，开始批量获取地理位置...")
+        print(f"🌐 聚合所有源后，共有原始节点 {len(merged_proxies)} 个，开始批量获取地理位置...")
         proxies_with_geo = batch_get_locations(merged_proxies)
 
         print("⚡ 开始并发 TCP 测速...")
@@ -350,7 +488,7 @@ def main():
                 return proxy
             return None
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=30) as executor:
             results = list(executor.map(check_node, proxies_with_geo))
 
         valid_proxies = [p for p in results if p is not None]
