@@ -10,7 +10,8 @@ import yaml
 
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
-MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "250"))
+MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "200"))
+MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "800"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
 
 
@@ -59,6 +60,11 @@ def country_code_to_emoji(country_code):
     return "".join(chr(127397 + ord(c)) for c in country_code.upper())
 
 
+def normalize_proxy_name(name, default):
+    text = str(name or default).strip()
+    return text if text else default
+
+
 def ensure_safe_proxy(proxy):
     if not isinstance(proxy, dict):
         return None
@@ -78,33 +84,36 @@ def ensure_safe_proxy(proxy):
     proxy["server"] = server
     proxy["port"] = port
     proxy["type"] = str(proxy.get("type", "unknown")).strip() or "unknown"
-
-    name = str(proxy.get("name", "")).strip()
-    if not name:
-        proxy["name"] = f"{proxy['type'].upper()}-{server}:{port}"
+    proxy["name"] = normalize_proxy_name(proxy.get("name"), f"{proxy['type'].upper()}-{server}:{port}")
     return proxy
+
+
+def proxy_signature(proxy):
+    safe = ensure_safe_proxy(proxy)
+    if not safe:
+        return None
+
+    return (
+        str(safe.get("type", "")).lower(),
+        str(safe.get("server", "")).lower(),
+        int(safe.get("port", 0)),
+        str(safe.get("uuid", "")).strip(),
+        str(safe.get("password", "")).strip(),
+        str(safe.get("cipher", "")).strip(),
+    )
 
 
 def deduplicate_proxies(proxies):
     seen = set()
     result = []
     for proxy in proxies:
-        safe = ensure_safe_proxy(proxy)
-        if not safe:
+        sig = proxy_signature(proxy)
+        if sig is None:
             continue
-
-        key = (
-            str(safe.get("type", "")).lower(),
-            str(safe.get("server", "")).lower(),
-            int(safe.get("port", 0)),
-            str(safe.get("uuid", "")).strip(),
-            str(safe.get("password", "")).strip(),
-            str(safe.get("cipher", "")).strip(),
-        )
-        if key in seen:
+        if sig in seen:
             continue
-        seen.add(key)
-        result.append(safe)
+        seen.add(sig)
+        result.append(ensure_safe_proxy(proxy))
     return result
 
 
@@ -150,7 +159,7 @@ def batch_get_locations(proxies):
     return proxies
 
 
-def test_tcp_latency(server, port, timeout=4):
+def test_tcp_latency(server, port, timeout=3):
     start_time = time.time()
     try:
         with socket.create_connection((server, int(port)), timeout=timeout):
@@ -158,6 +167,47 @@ def test_tcp_latency(server, port, timeout=4):
             return round(latency, 2)
     except Exception:
         return None
+
+
+def proxy_quality_score(proxy):
+    latency = proxy.get("latency", 99999)
+    country = str(proxy.get("geo_country", "其他")).strip()
+    penalty = 0
+    if country == "其他":
+        penalty += 200
+    if country == "未知":
+        penalty += 150
+    if proxy.get("type") in {"ssr", "unknown"}:
+        penalty += 50
+    if "v2ray" in str(proxy.get("name", "")).lower():
+        penalty += 20
+    return latency + penalty
+
+
+def select_high_quality_proxies(valid_proxies, max_output=None, max_latency_ms=None):
+    if max_output is None:
+        max_output = MAX_PROXY_OUTPUT
+    if max_latency_ms is None:
+        max_latency_ms = MAX_LATENCY_MS
+
+    filtered = []
+    for proxy in valid_proxies:
+        if proxy.get("latency", 99999) > max_latency_ms:
+            continue
+        filtered.append(proxy)
+
+    filtered.sort(key=lambda p: (proxy_quality_score(p), p.get("latency", 99999)))
+
+    deduped = []
+    seen = set()
+    for proxy in filtered:
+        key = (str(proxy.get("server", "")).lower(), int(proxy.get("port", 0)))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(proxy)
+
+    return deduped[:max_output]
 
 
 # ==================== 万能订阅内容解析器 ====================
@@ -262,9 +312,41 @@ def parse_trojan_link(link):
     return None
 
 
+def parse_ssr_link(link):
+    try:
+        part = link[6:]
+        if "#" in part:
+            part, name = part.split("#", 1)
+            name = urllib.parse.unquote(name)
+        else:
+            name = "SSR-Node"
+
+        decoded = base64.b64decode(part + "=" * (-len(part) % 4)).decode("utf-8", errors="ignore")
+        if not decoded:
+            return None
+        if ":" not in decoded:
+            return None
+        protocol, remaining = decoded.split(":", 1)
+        if "/" in remaining:
+            remaining = remaining.split("/", 1)[0]
+        if ":" in remaining:
+            server, port = remaining.rsplit(":", 1)
+            return {
+                "name": name,
+                "type": "ssr",
+                "server": server,
+                "port": int(port),
+                "cipher": protocol,
+                "password": "",
+            }
+    except Exception:
+        return None
+    return None
+
+
 def extract_proxies_from_content(text):
     proxies = []
-    text_stripped = text.strip()
+    text_stripped = (text or "").strip()
 
     try:
         data = yaml.safe_load(text_stripped)
@@ -290,6 +372,7 @@ def extract_proxies_from_content(text):
         line = line.strip()
         if not line or line.startswith("#"):
             continue
+
         proxy = None
         if line.startswith("vmess://"):
             proxy = parse_vmess_link(line)
@@ -297,6 +380,8 @@ def extract_proxies_from_content(text):
             proxy = parse_ss_link(line)
         elif line.startswith("trojan://"):
             proxy = parse_trojan_link(line)
+        elif line.startswith("ssr://"):
+            proxy = parse_ssr_link(line)
 
         if proxy and proxy.get("server") and proxy.get("port"):
             proxies.append(proxy)
@@ -308,7 +393,13 @@ def extract_proxies_from_content(text):
 
 def generate_advanced_clash_config(valid_proxies, country_groups):
     country_group_names = list(country_groups.keys())
-    all_proxy_names = [p["name"] for p in valid_proxies]
+    all_proxy_names = []
+    seen_names = set()
+    for p in valid_proxies:
+        name = p.get("name")
+        if name not in seen_names:
+            all_proxy_names.append(name)
+            seen_names.add(name)
 
     proxy_groups = [
         {
@@ -432,13 +523,15 @@ def send_notification(send_key, success_count, filtered_count=None):
 
     clash_url = f"{pages_url}/sub/clash.yaml"
     v2ray_url = f"{pages_url}/sub/v2ray.txt"
-    total_label = f"{filtered_count} / {success_count}" if filtered_count is not None else str(success_count)
+    final_label = str(filtered_count) if filtered_count is not None else str(success_count)
+    print_label = f"{success_count} -> {final_label}" if filtered_count is not None else str(success_count)
 
     url = f"https://sctapi.ftqq.com/{send_key}.send"
 
     desp = (
         "### 🟢 免费节点自动更新报告（重构高产版）\n"
-        f"- **可用节点数**: `{total_label}` 个\n"
+        f"- **原始有效节点**: `{success_count}` 个\n"
+        f"- **优选可用节点**: `{final_label}` 个\n"
         "- **触发方式**: 手动触发推送\n\n"
         "---\n\n"
         "#### 📌 Clash 订阅直链\n"
@@ -452,7 +545,7 @@ def send_notification(send_key, success_count, filtered_count=None):
     )
 
     params = {
-        "title": f"Free Nodes Success: {total_label} Nodes",
+        "title": f"Free Nodes Success: {print_label} Nodes",
         "desp": desp,
     }
 
@@ -488,6 +581,9 @@ def main():
         merged_proxies = []
         source_health_report = []
 
+        session = requests.Session()
+        session.headers.update({"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"})
+
         for url in source_urls:
             print(f"\n📥 正在检查并抓取源: {url}")
             start_t = time.time()
@@ -495,7 +591,7 @@ def main():
             is_success = False
 
             try:
-                res = requests.get(url, timeout=15)
+                res = session.get(url, timeout=15)
                 source_info["latency"] = round((time.time() - start_t) * 1000, 2)
 
                 if res.status_code == 200:
@@ -581,15 +677,19 @@ def main():
             return
 
         max_output = int(os.environ.get("MAX_PROXY_OUTPUT", str(MAX_PROXY_OUTPUT)))
-        final_proxies = valid_proxies[:max_output]
-        print(f"📦 已筛选优质节点 {len(final_proxies)} 个，供 Clash/V2Ray 输出与推送使用。")
+        best_proxies = select_high_quality_proxies(valid_proxies, max_output=max_output, max_latency_ms=MAX_LATENCY_MS)
+        print(f"📦 优选高质量节点数: {len(best_proxies)}，延迟上限: {MAX_LATENCY_MS}ms")
+
+        if not best_proxies:
+            print("❌ 过滤后没有符合条件的优质节点。")
+            return
 
         country_groups = {}
-        for p in final_proxies:
+        for p in best_proxies:
             group_name = f"{p.get('geo_flag')} {p.get('geo_country')} 节点"
             country_groups.setdefault(group_name, []).append(p["name"])
 
-        clash_config = generate_advanced_clash_config(final_proxies, country_groups)
+        clash_config = generate_advanced_clash_config(best_proxies, country_groups)
 
         for p in clash_config["proxies"]:
             p.pop("latency", None)
@@ -601,12 +701,12 @@ def main():
             yaml.dump(clash_config, f, allow_unicode=True, sort_keys=False)
         print("💾 Clash 文件已写入 sub/clash.yaml")
 
-        generate_v2ray_subscription(final_proxies, "sub/v2ray.txt")
+        generate_v2ray_subscription(best_proxies, "sub/v2ray.txt")
         print("💾 V2Ray 文件已写入 sub/v2ray.txt")
 
         event_name = os.environ.get("GITHUB_EVENT_NAME", "")
         if event_name == "workflow_dispatch":
-            send_notification(os.environ.get("SEND_KEY"), len(valid_proxies), len(final_proxies))
+            send_notification(os.environ.get("SEND_KEY"), len(valid_proxies), len(best_proxies))
         else:
             print("ℹ️ 当前为定时自动运行，已跳过 Server酱微信推送。")
 
