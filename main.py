@@ -11,8 +11,8 @@ import yaml
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
 
-# 严格筛选版：优先保留低延迟、可识别地区的高质量节点
-MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "150"))
+STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "true"
+MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "300"))
 MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "600"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
 
@@ -191,13 +191,11 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
         country = str(proxy.get("geo_country", "其他")).strip()
         if latency > max_latency_ms:
             continue
-        # 严格模式：优先筛掉“未知/其他地区”
         if country in ("其他", "未知"):
             continue
         strict.append(proxy)
 
     if not strict:
-        # 极端兜底：如果完全没有合格节点，就退回低延迟节点
         strict = [p for p in valid_proxies if float(p.get("latency", 99999)) <= max_latency_ms]
 
     strict.sort(key=lambda p: (proxy_priority(p), p.get("latency", 99999)))
@@ -212,6 +210,21 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
         deduped.append(proxy)
 
     return deduped[:max_output]
+
+
+def select_final_proxies(valid_proxies):
+    if STRICT_FILTER_MODE:
+        return strict_filter_proxies(valid_proxies, MAX_PROXY_OUTPUT, MAX_LATENCY_MS)
+
+    deduped = []
+    seen = set()
+    for proxy in sorted(valid_proxies, key=lambda p: (p.get("latency") is None, p.get("latency") or 999999, p.get("geo_country") == "其他")):
+        key = (str(proxy.get("server", "")).lower(), int(proxy.get("port", 0)))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(proxy)
+    return deduped[:MAX_PROXY_OUTPUT]
 
 
 # ==================== 万能订阅内容解析器 ====================
@@ -515,10 +528,10 @@ def send_notification(send_key, total_count, final_count):
 
     url = f"https://sctapi.ftqq.com/{send_key}.send"
     desp = (
-        "### 🟢 免费节点自动更新报告（严格筛选版）\n"
-        f"- **测速存活节点**: `{total_count}` 个\n"
-        f"- **严格优选节点**: `{final_count}` 个\n"
-        "- **筛选规则**: 延迟 <= 600ms 且地区明确\n\n"
+        "### 🟢 免费节点自动更新报告（全部抓取并推送版）\n"
+        f"- **抓取到的节点**: `{total_count}` 个\n"
+        f"- **实际推送的节点**: `{final_count}` 个\n"
+        "- **模式**: 全量抓取，不做严格过滤\n\n"
         "---\n\n"
         "#### 📌 Clash 订阅直链\n"
         "```text\n"
@@ -531,7 +544,7 @@ def send_notification(send_key, total_count, final_count):
     )
 
     params = {
-        "title": f"Free Nodes Strict Filter: {final_count} Nodes",
+        "title": f"Free Nodes All Push: {final_count} Nodes",
         "desp": desp,
     }
 
@@ -636,7 +649,7 @@ def main():
         print(f"🌐 聚合后共有原始节点 {len(merged_proxies)} 个，开始批量获取地理位置...")
         proxies_with_geo = batch_get_locations(merged_proxies)
 
-        print("⚡ 开始并发 TCP 测速...")
+        print("⚡ 开始并发 TCP 测速，但不再把测速结果当成最终筛选条件...")
 
         def check_node(proxy):
             server = proxy.get("server")
@@ -649,30 +662,25 @@ def main():
                 flag = proxy.get("geo_flag", "🌍")
                 country = proxy.get("geo_country", "未知")
                 proxy["name"] = f"{flag} [{country}] {proxy.get('name', 'Node')} | {latency}ms"
-                return proxy
-            return None
+            else:
+                proxy["latency"] = None
+                flag = proxy.get("geo_flag", "🌍")
+                country = proxy.get("geo_country", "未知")
+                proxy["name"] = f"{flag} [{country}] {proxy.get('name', 'Node')} | 未测速"
+            return proxy
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_THREAD_WORKERS) as executor:
             results = list(executor.map(check_node, proxies_with_geo))
 
-        valid_proxies = [p for p in results if p is not None]
-        valid_proxies.sort(key=lambda x: x["latency"])
-        print(f"🎯 TCP 测速完成，存活节点数: {len(valid_proxies)}")
+        all_proxies = [p for p in results if p is not None]
+        all_proxies.sort(key=lambda x: (x.get("latency") is None, x.get("latency") or 999999, x.get("geo_country") == "其他"))
+        print(f"🎯 全量抓取完成，当前总节点数: {len(all_proxies)}")
 
-        if not valid_proxies:
-            print("❌ 所有节点测速均失败。")
-            return
-
-        final_proxies = strict_filter_proxies(
-            valid_proxies,
-            max_output=MAX_PROXY_OUTPUT,
-            max_latency_ms=MAX_LATENCY_MS,
-        )
-
-        print(f"📦 严格优选后剩余 {len(final_proxies)} 个高质量节点（延迟 <= {MAX_LATENCY_MS}ms 且地区明确）")
+        final_proxies = select_final_proxies(all_proxies)
+        print(f"📦 最终输出节点数: {len(final_proxies)}")
 
         if not final_proxies:
-            print("❌ 严格筛选后没有符合条件的节点，已中止输出。")
+            print("❌ 没有可输出节点，已中止生成订阅。")
             return
 
         country_groups = {}
@@ -697,7 +705,7 @@ def main():
 
         event_name = os.environ.get("GITHUB_EVENT_NAME", "")
         if event_name == "workflow_dispatch":
-            send_notification(os.environ.get("SEND_KEY"), len(valid_proxies), len(final_proxies))
+            send_notification(os.environ.get("SEND_KEY"), len(all_proxies), len(final_proxies))
         else:
             print("ℹ️ 当前为定时自动运行，已跳过 Server酱微信推送。")
 
