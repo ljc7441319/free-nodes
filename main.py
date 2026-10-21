@@ -115,6 +115,18 @@ def deduplicate_proxies(proxies):
     return result
 
 
+def make_unique_proxy_name(proxy, seen_names):
+    base_name = str(proxy.get("name") or f"{proxy.get('type', 'proxy')}-{proxy.get('server')}:{proxy.get('port')}").strip() or "Proxy"
+    candidate = base_name
+    suffix = 2
+    while candidate in seen_names:
+        candidate = f"{base_name} ({suffix})"
+        suffix += 1
+    seen_names.add(candidate)
+    proxy["name"] = candidate
+    return candidate
+
+
 def batch_get_locations(proxies):
     queries = []
     ip_to_proxy_indices = {}
@@ -400,13 +412,11 @@ def extract_proxies_from_content(text):
 # ==========================================================
 def generate_advanced_clash_config(valid_proxies, country_groups):
     country_group_names = list(country_groups.keys())
-    all_proxy_names = []
     seen_names = set()
+    all_proxy_names = []
     for p in valid_proxies:
-        name = p.get("name")
-        if name not in seen_names:
-            all_proxy_names.append(name)
-            seen_names.add(name)
+        name = make_unique_proxy_name(p, seen_names)
+        all_proxy_names.append(name)
 
     proxy_groups = [
         {
@@ -425,10 +435,16 @@ def generate_advanced_clash_config(valid_proxies, country_groups):
     ]
 
     for group_name, proxies in country_groups.items():
+        group_names = []
+        group_seen = set()
+        for proxy in proxies:
+            if proxy not in group_seen:
+                group_names.append(proxy)
+                group_seen.add(proxy)
         proxy_groups.append({
             "name": group_name,
             "type": "url-test",
-            "proxies": proxies,
+            "proxies": group_names,
             "url": "http://www.gstatic.com/generate_204",
             "interval": 300,
             "tolerance": 50,
@@ -684,6 +700,10 @@ def main():
         if not final_proxies:
             print("❌ 没有可输出节点，已中止生成订阅。")
             return
+
+        seen_names = set()
+        for p in final_proxies:
+            make_unique_proxy_name(p, seen_names)
 
         country_groups = {}
         for p in final_proxies:
