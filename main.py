@@ -11,9 +11,9 @@ import yaml
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
 
-# 全量抓取 + 全量推送模式：默认不严格过滤，仅在显式开启 STRICT_FILTER_MODE=true 时启用严格筛选
-STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "true"
-MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "300"))
+# 默认采用真实可用节点优先模式：只有在显式关闭 STRICT_FILTER_MODE 时，才允许全量抓取并推送
+STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "true").lower() == "true"
+MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "150"))
 MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "600"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
 
@@ -516,7 +516,7 @@ def generate_v2ray_subscription(valid_proxies, output_path="sub/v2ray.txt"):
             f.write(b64)
 
 
-def send_notification(send_key, total_count, final_count):
+def send_notification(send_key, total_count, final_count, mode_label):
     if not send_key:
         print("ℹ️ 未检测到 SEND_KEY，跳过微信推送。")
         return
@@ -529,10 +529,10 @@ def send_notification(send_key, total_count, final_count):
 
     url = f"https://sctapi.ftqq.com/{send_key}.send"
     desp = (
-        "### 🟢 免费节点自动更新报告（全量抓取 + 全量推送版）\n"
+        "### 🟢 免费节点自动更新报告\n"
         f"- **抓取到的节点**: `{total_count}` 个\n"
         f"- **实际推送的节点**: `{final_count}` 个\n"
-        "- **模式**: 全量抓取，不做严格过滤\n\n"
+        f"- **模式**: `{mode_label}`\n\n"
         "---\n\n"
         "#### 📌 Clash 订阅直链\n"
         "```text\n"
@@ -545,7 +545,7 @@ def send_notification(send_key, total_count, final_count):
     )
 
     params = {
-        "title": f"Free Nodes All Push: {final_count} Nodes",
+        "title": f"Free Nodes: {final_count} Nodes ({mode_label})",
         "desp": desp,
     }
 
@@ -650,7 +650,7 @@ def main():
         print(f"🌐 聚合后共有原始节点 {len(merged_proxies)} 个，开始批量获取地理位置...")
         proxies_with_geo = batch_get_locations(merged_proxies)
 
-        print("⚡ 开始并发 TCP 测速，但不再把测速结果当成最终筛选条件...")
+        print("⚡ 开始并发 TCP 测速...")
 
         def check_node(proxy):
             server = proxy.get("server")
@@ -675,10 +675,10 @@ def main():
 
         all_proxies = [p for p in results if p is not None]
         all_proxies.sort(key=lambda x: (x.get("latency") is None, x.get("latency") or 999999, x.get("geo_country") == "其他"))
-        print(f"🎯 全量抓取完成，当前总节点数: {len(all_proxies)}")
+        print(f"🎯 总抓取后保留节点数: {len(all_proxies)}")
 
         final_proxies = select_final_proxies(all_proxies)
-        print(f"📦 最终输出节点数: {len(final_proxies)}")
+        print(f"📦 实际输出节点数: {len(final_proxies)}")
 
         if not final_proxies:
             print("❌ 没有可输出节点，已中止生成订阅。")
@@ -706,7 +706,8 @@ def main():
 
         event_name = os.environ.get("GITHUB_EVENT_NAME", "")
         if event_name == "workflow_dispatch":
-            send_notification(os.environ.get("SEND_KEY"), len(all_proxies), len(final_proxies))
+            mode_label = "strict" if STRICT_FILTER_MODE else "full"
+            send_notification(os.environ.get("SEND_KEY"), len(all_proxies), len(final_proxies), mode_label)
         else:
             print("ℹ️ 当前为定时自动运行，已跳过 Server酱微信推送。")
 
