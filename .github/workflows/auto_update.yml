@@ -3,7 +3,7 @@ name: Auto Update Free Nodes
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */2 * * *' # 每两小时自动运行一次
+    - cron: '0 */4 * * *' # 每四小时自动运行一次
 
 permissions:
   contents: write
