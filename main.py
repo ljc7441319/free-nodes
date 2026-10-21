@@ -11,6 +11,7 @@ import yaml
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
 
+# 全量抓取 + 全量推送模式：默认不严格过滤，仅在显式开启 STRICT_FILTER_MODE=true 时启用严格筛选
 STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "true"
 MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "300"))
 MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "600"))
@@ -528,7 +529,7 @@ def send_notification(send_key, total_count, final_count):
 
     url = f"https://sctapi.ftqq.com/{send_key}.send"
     desp = (
-        "### 🟢 免费节点自动更新报告（全部抓取并推送版）\n"
+        "### 🟢 免费节点自动更新报告（全量抓取 + 全量推送版）\n"
         f"- **抓取到的节点**: `{total_count}` 个\n"
         f"- **实际推送的节点**: `{final_count}` 个\n"
         "- **模式**: 全量抓取，不做严格过滤\n\n"
