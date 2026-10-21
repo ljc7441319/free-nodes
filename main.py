@@ -169,8 +169,18 @@ def test_tcp_latency(server, port, timeout=3):
         return None
 
 
+def safe_latency_value(proxy, default=99999):
+    value = proxy.get("latency")
+    if value is None or value == "":
+        return float(default)
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return float(default)
+
+
 def proxy_priority(proxy):
-    latency = float(proxy.get("latency", 99999))
+    latency = safe_latency_value(proxy)
     country = str(proxy.get("geo_country", "其他")).strip()
     score = latency
     if country in ("其他", "未知"):
@@ -188,7 +198,7 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
 
     strict = []
     for proxy in valid_proxies:
-        latency = float(proxy.get("latency", 99999))
+        latency = safe_latency_value(proxy, default=99999)
         country = str(proxy.get("geo_country", "其他")).strip()
         if latency > max_latency_ms:
             continue
@@ -197,9 +207,9 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
         strict.append(proxy)
 
     if not strict:
-        strict = [p for p in valid_proxies if float(p.get("latency", 99999)) <= max_latency_ms]
+        strict = [p for p in valid_proxies if safe_latency_value(p, default=99999) <= max_latency_ms]
 
-    strict.sort(key=lambda p: (proxy_priority(p), p.get("latency", 99999)))
+    strict.sort(key=lambda p: (proxy_priority(p), safe_latency_value(p, default=99999)))
 
     deduped = []
     seen = set()
