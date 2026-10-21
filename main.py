@@ -11,10 +11,10 @@ import yaml
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
 
-# 默认采用真实可用节点优先模式：只有在显式关闭 STRICT_FILTER_MODE 时，才允许全量抓取并推送
-STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "true").lower() == "true"
-MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "150"))
-MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "600"))
+# 默认走“全量抓取 + 全量推送”模式；只有在显式打开 STRICT_FILTER_MODE=true 时才启用严格筛选
+STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "true"
+MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "3000"))
+MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "99999"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
 
 
@@ -169,18 +169,8 @@ def test_tcp_latency(server, port, timeout=3):
         return None
 
 
-def safe_latency_value(proxy, default=99999):
-    value = proxy.get("latency")
-    if value is None or value == "":
-        return float(default)
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return float(default)
-
-
 def proxy_priority(proxy):
-    latency = safe_latency_value(proxy)
+    latency = float(proxy.get("latency", 99999))
     country = str(proxy.get("geo_country", "其他")).strip()
     score = latency
     if country in ("其他", "未知"):
@@ -198,7 +188,7 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
 
     strict = []
     for proxy in valid_proxies:
-        latency = safe_latency_value(proxy, default=99999)
+        latency = float(proxy.get("latency", 99999))
         country = str(proxy.get("geo_country", "其他")).strip()
         if latency > max_latency_ms:
             continue
@@ -207,9 +197,9 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
         strict.append(proxy)
 
     if not strict:
-        strict = [p for p in valid_proxies if safe_latency_value(p, default=99999) <= max_latency_ms]
+        strict = [p for p in valid_proxies if float(p.get("latency", 99999)) <= max_latency_ms]
 
-    strict.sort(key=lambda p: (proxy_priority(p), safe_latency_value(p, default=99999)))
+    strict.sort(key=lambda p: (proxy_priority(p), p.get("latency", 99999)))
 
     deduped = []
     seen = set()
@@ -224,6 +214,7 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
 
 
 def select_final_proxies(valid_proxies):
+    # 默认全量推送：只做 server+port 去重，并限制最多输出数量
     if STRICT_FILTER_MODE:
         return strict_filter_proxies(valid_proxies, MAX_PROXY_OUTPUT, MAX_LATENCY_MS)
 
@@ -660,7 +651,7 @@ def main():
         print(f"🌐 聚合后共有原始节点 {len(merged_proxies)} 个，开始批量获取地理位置...")
         proxies_with_geo = batch_get_locations(merged_proxies)
 
-        print("⚡ 开始并发 TCP 测速...")
+        print("⚡ 开始并发 TCP 测速（仅用于观测，不用于默认过滤）...")
 
         def check_node(proxy):
             server = proxy.get("server")
