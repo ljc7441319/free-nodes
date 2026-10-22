@@ -25,6 +25,8 @@ MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
 DEFAULT_PASTE_TO_SOURCES = [
     "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
 ]
+PASTE_TO_SPECIAL_ID = "14372a45d5d8fbb7"
+PASTE_TO_SPECIAL_HASH = "771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb"
 
 
 def load_failure_stats():
@@ -432,12 +434,51 @@ def fetch_page_via_browser(url, timeout_seconds=30):
         return ""
 
 
+def build_special_paste_candidates(url):
+    parsed = urllib.parse.urlparse(url)
+    candidates = []
+    paste_id = parsed.query or parsed.path.strip("/")
+    if paste_id in ("", "/"):
+        paste_id = PASTE_TO_SPECIAL_ID
+    if "14372a45d5d8fbb7" in url:
+        paste_id = PASTE_TO_SPECIAL_ID
+    if paste_id:
+        candidates.extend([
+            f"https://paste.to/{paste_id}",
+            f"https://paste.to/raw/{paste_id}",
+            f"https://paste.to/?{paste_id}",
+            f"https://paste.to/?{paste_id}#{parsed.fragment}",
+            f"https://paste.to/raw/{paste_id}?token={parsed.fragment}",
+            f"https://paste.to/raw/{paste_id}#{parsed.fragment}",
+        ])
+    if parsed.fragment:
+        candidates.extend([
+            f"https://paste.to/raw/{PASTE_TO_SPECIAL_ID}?token={parsed.fragment}",
+            f"https://paste.to/raw/{PASTE_TO_SPECIAL_ID}#{parsed.fragment}",
+            f"https://paste.to/?{PASTE_TO_SPECIAL_ID}#{parsed.fragment}",
+        ])
+    candidates.extend([
+        "https://paste.to/?14372a45d5d8fbb7",
+        "https://paste.to/14372a45d5d8fbb7",
+        "https://paste.to/raw/14372a45d5d8fbb7",
+        "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
+    ])
+    unique = []
+    seen = set()
+    for item in candidates:
+        if item not in seen:
+            seen.add(item)
+            unique.append(item)
+    return unique
+
+
 def discover_paste_to_sources(url, session):
     if "paste.to" not in url.lower():
         return []
 
     discovered = []
     page_content = ""
+
     try:
         response = session.get(url, timeout=20)
         if response.status_code == 200:
@@ -451,6 +492,24 @@ def discover_paste_to_sources(url, session):
 
     if page_content:
         discovered.extend(extract_subscription_links_from_text(page_content))
+
+    if "14372a45d5d8fbb7" in url or "771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb" in url:
+        for candidate in build_special_paste_candidates(url):
+            leads = []
+            try:
+                r = session.get(candidate, timeout=20)
+                if r.status_code == 200:
+                    leads.append(r.text or "")
+            except Exception:
+                pass
+            if not leads:
+                browser_text = fetch_page_via_browser(candidate)
+                if browser_text:
+                    leads.append(browser_text)
+            for content in leads:
+                discovered.extend(extract_subscription_links_from_text(content))
+                if not discovered:
+                    discovered.extend(brute_force_numeric_cipher_links(content))
 
     parsed = urllib.parse.urlparse(url)
     raw_candidates = []
