@@ -286,7 +286,12 @@ def select_final_proxies(valid_proxies):
 def extract_numeric_keys(text):
     if not text:
         return []
-    return sorted(set(match.group(1) for match in re.finditer(r"(?<!\d)(\d{4})(?!\d)", text)))
+    found = set()
+    for match in re.finditer(r"(?<!\d)(\d{4})(?!\d)", text):
+        val = match.group(1)
+        if 1000 <= int(val) <= 9999:
+            found.add(val)
+    return sorted(found)
 
 
 def _decode_numeric_xor(payload, key):
@@ -299,71 +304,81 @@ def _decode_numeric_xor(payload, key):
         return ""
 
 
-def _decode_numeric_add_sub(payload, key):
+def _decode_numeric_add_sub(payload, key, mode="add"):
     try:
         blob = payload.encode("utf-8")
         k = int(key)
-        out = bytes((b + k) % 256 for b in blob)
+        if mode == "add":
+            out = bytes((b + k) % 256 for b in blob)
+        elif mode == "sub":
+            out = bytes((b - k) % 256 for b in blob)
+        elif mode == "xor":
+            out = bytes(b ^ k for b in blob)
+        else:
+            return ""
         return out.decode("utf-8", errors="ignore")
     except Exception:
         return ""
 
 
-def _decode_numeric_minus(payload, key):
-    try:
-        blob = payload.encode("utf-8")
-        k = int(key)
-        out = bytes((b - k) % 256 for b in blob)
-        return out.decode("utf-8", errors="ignore")
-    except Exception:
-        return ""
-
-
-def _numeric_key_bruteforce_candidates(text):
-    seen = set()
-    results = []
-    for key in extract_numeric_keys(text):
-        if key in seen:
-            continue
-        seen.add(key)
-        results.append(key)
-    return results
+def _extract_potential_cipher_payloads(text):
+    blobs = set()
+    pattern = r"[A-Za-z0-9+/=_-]{20,}"
+    for item in re.findall(pattern, text):
+        if len(item) >= 20 and not item.lower().startswith(("http", "https")):
+            blobs.add(item)
+    # sometimes embedded strings are in quoted JSON or JS arrays; keep them too
+    for item in re.findall(r'"([A-Za-z0-9+/=_-]{20,})"', text):
+        blobs.add(item)
+    for item in re.findall(r"'([A-Za-z0-9+/=_-]{20,})'", text):
+        blobs.add(item)
+    return sorted(blobs)
 
 
 def brute_force_numeric_cipher_links(text):
     if not text:
         return []
-    candidates = []
-    for token in re.findall(r"[A-Za-z0-9+/=]{16,}", text):
-        if len(token) < 16:
-            continue
-        candidates.append(token)
+    keys = extract_numeric_keys(text)
+    if not keys:
+        # 4-digit key may not appear explicitly in page; try the common range as a last resort
+        keys = [str(i).zfill(4) for i in range(1000, 10000)]
 
-    if not candidates:
-        return []
+    payloads = _extract_potential_cipher_payloads(text)
+    if not payloads:
+        payloads = list(set(re.findall(r"[A-Za-z0-9+/=_-]{16,}", text)))
 
     found = []
-    for key in _numeric_key_bruteforce_candidates(text):
-        for payload in candidates:
+    seen = set()
+
+    for key in keys[:1000]:
+        if len(found) >= 20:
+            break
+        for payload in payloads:
+            if len(payload) < 16:
+                continue
             for decoder in (
-                lambda p, k: _decode_numeric_xor(p, k),
-                lambda p, k: _decode_numeric_add_sub(p, k),
-                lambda p, k: _decode_numeric_minus(p, k),
+                (lambda p, k: _decode_numeric_xor(p, k)),
+                (lambda p, k: _decode_numeric_add_sub(p, k, "add")),
+                (lambda p, k: _decode_numeric_add_sub(p, k, "sub")),
+                (lambda p, k: _decode_numeric_add_sub(p, k, "xor")),
             ):
-                try:
-                    decoded = decoder(payload, key)
-                except Exception:
-                    decoded = ""
+                decoded = decoder(payload, key)
                 if not decoded:
                     continue
                 if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
                     for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
-                        found.append(match.rstrip(")].,;\n\r"))
+                        candidate = match.rstrip(")].,;\n\r")
+                        if candidate and candidate not in seen:
+                            seen.add(candidate)
+                            found.append(candidate)
                     for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
-                        found.append(match.rstrip(")].,;\n\r"))
-                    if found:
-                        return list(dict.fromkeys(found))
-    return []
+                        candidate = match.rstrip(")].,;\n\r")
+                        if candidate and candidate not in seen:
+                            seen.add(candidate)
+                            found.append(candidate)
+                    if len(found) >= 20:
+                        return found
+    return found
 
 
 def extract_subscription_links_from_text(content):
@@ -410,7 +425,6 @@ def discover_paste_to_sources(url, session):
         text = response.text or ""
         discovered.extend(extract_subscription_links_from_text(text))
 
-        # paste.to 的页面常常会在页面中藏有 raw 版本或者 API 返回的内容，需要继续尝试
         parsed = urllib.parse.urlparse(url)
         raw_candidates = []
         if parsed.query:
@@ -426,7 +440,6 @@ def discover_paste_to_sources(url, session):
                     f"https://paste.to/{path_id}",
                 ])
 
-        # 直接打开 fragment 相关页面也要兼容
         fragment = parsed.fragment
         if fragment:
             raw_candidates.extend([
@@ -444,18 +457,9 @@ def discover_paste_to_sources(url, session):
             except Exception:
                 continue
 
-        # 若页面中混着 4 位数字密钥，直接尝试单次解密
-        numeric_keys = extract_numeric_keys(text)
-        if not discovered and numeric_keys:
-            for key in numeric_keys:
-                payloads = list(set(re.findall(r"[A-Za-z0-9+/=]{20,}", text)))
-                for payload in payloads:
-                    decoded = _decode_numeric_xor(payload, key)
-                    if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
-                        for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
-                            discovered.append(match.rstrip(")].,;\n\r"))
-                        for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
-                            discovered.append(match.rstrip(")].,;\n\r"))
+        # 若页面里是被 4 位数字密钥混淆过的订阅内容，则必须继续尝试全枚举
+        if not discovered:
+            discovered.extend(brute_force_numeric_cipher_links(text))
 
     except Exception:
         return []
