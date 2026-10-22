@@ -283,6 +283,89 @@ def select_final_proxies(valid_proxies):
     return deduped[:MAX_PROXY_OUTPUT]
 
 
+def extract_numeric_keys(text):
+    if not text:
+        return []
+    return sorted(set(match.group(1) for match in re.finditer(r"(?<!\d)(\d{4})(?!\d)", text)))
+
+
+def _decode_numeric_xor(payload, key):
+    try:
+        blob = payload.encode("utf-8")
+        key_bytes = str(key).encode("utf-8")
+        out = bytes(b ^ key_bytes[i % len(key_bytes)] for i, b in enumerate(blob))
+        return out.decode("utf-8", errors="ignore")
+    except Exception:
+        return ""
+
+
+def _decode_numeric_add_sub(payload, key):
+    try:
+        blob = payload.encode("utf-8")
+        k = int(key)
+        out = bytes((b + k) % 256 for b in blob)
+        return out.decode("utf-8", errors="ignore")
+    except Exception:
+        return ""
+
+
+def _decode_numeric_minus(payload, key):
+    try:
+        blob = payload.encode("utf-8")
+        k = int(key)
+        out = bytes((b - k) % 256 for b in blob)
+        return out.decode("utf-8", errors="ignore")
+    except Exception:
+        return ""
+
+
+def _numeric_key_bruteforce_candidates(text):
+    seen = set()
+    results = []
+    for key in extract_numeric_keys(text):
+        if key in seen:
+            continue
+        seen.add(key)
+        results.append(key)
+    return results
+
+
+def brute_force_numeric_cipher_links(text):
+    if not text:
+        return []
+    candidates = []
+    for token in re.findall(r"[A-Za-z0-9+/=]{16,}", text):
+        if len(token) < 16:
+            continue
+        candidates.append(token)
+
+    if not candidates:
+        return []
+
+    found = []
+    for key in _numeric_key_bruteforce_candidates(text):
+        for payload in candidates:
+            for decoder in (
+                lambda p, k: _decode_numeric_xor(p, k),
+                lambda p, k: _decode_numeric_add_sub(p, k),
+                lambda p, k: _decode_numeric_minus(p, k),
+            ):
+                try:
+                    decoded = decoder(payload, key)
+                except Exception:
+                    decoded = ""
+                if not decoded:
+                    continue
+                if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
+                    for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
+                        found.append(match.rstrip(")].,;\n\r"))
+                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
+                        found.append(match.rstrip(")].,;\n\r"))
+                    if found:
+                        return list(dict.fromkeys(found))
+    return []
+
+
 def extract_subscription_links_from_text(content):
     if not content:
         return []
@@ -303,7 +386,16 @@ def extract_subscription_links_from_text(content):
         if href not in seen:
             seen.add(href)
             cleaned.append(href)
-    return cleaned
+
+    if cleaned:
+        return cleaned
+
+    # 兼容 paste.to 这类带 4 位数字加密的页面：直接用数字密钥暴力尝试解密页面中的混淆串
+    numeric_decoded = brute_force_numeric_cipher_links(content)
+    if numeric_decoded:
+        return numeric_decoded
+
+    return []
 
 
 def discover_paste_to_sources(url, session):
@@ -318,14 +410,14 @@ def discover_paste_to_sources(url, session):
         text = response.text or ""
         discovered.extend(extract_subscription_links_from_text(text))
 
+        # paste.to 的页面常常会在页面中藏有 raw 版本或者 API 返回的内容，需要继续尝试
         parsed = urllib.parse.urlparse(url)
+        raw_candidates = []
         if parsed.query:
-            raw_candidates = [
+            raw_candidates.extend([
                 f"https://paste.to/raw/{parsed.query.split('&', 1)[0]}",
                 f"https://paste.to/{parsed.query.split('&', 1)[0]}",
-            ]
-        else:
-            raw_candidates = []
+            ])
         if parsed.path and parsed.path not in ("/", ""):
             path_id = parsed.path.strip("/")
             if path_id and path_id not in {"?", ""}:
@@ -334,9 +426,13 @@ def discover_paste_to_sources(url, session):
                     f"https://paste.to/{path_id}",
                 ])
 
-        raw_candidates.extend([
-            url.replace("paste.to/", "paste.to/raw/", 1) if "/" in url.split("paste.to/", 1)[1] else url,
-        ])
+        # 直接打开 fragment 相关页面也要兼容
+        fragment = parsed.fragment
+        if fragment:
+            raw_candidates.extend([
+                f"https://paste.to/raw/{fragment}",
+                f"https://paste.to/{fragment}",
+            ])
 
         for candidate in list(dict.fromkeys(raw_candidates)):
             if not candidate or "paste.to" not in candidate.lower():
@@ -347,6 +443,20 @@ def discover_paste_to_sources(url, session):
                     discovered.extend(extract_subscription_links_from_text(raw_response.text))
             except Exception:
                 continue
+
+        # 若页面中混着 4 位数字密钥，直接尝试单次解密
+        numeric_keys = extract_numeric_keys(text)
+        if not discovered and numeric_keys:
+            for key in numeric_keys:
+                payloads = list(set(re.findall(r"[A-Za-z0-9+/=]{20,}", text)))
+                for payload in payloads:
+                    decoded = _decode_numeric_xor(payload, key)
+                    if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
+                        for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
+                            discovered.append(match.rstrip(")].,;\n\r"))
+                        for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
+                            discovered.append(match.rstrip(")].,;\n\r"))
+
     except Exception:
         return []
 
