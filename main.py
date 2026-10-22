@@ -9,6 +9,11 @@ import re
 import requests
 import yaml
 
+try:
+    from playwright.sync_api import sync_playwright
+except Exception:
+    sync_playwright = None
+
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
 
@@ -327,7 +332,6 @@ def _extract_potential_cipher_payloads(text):
     for item in re.findall(pattern, text):
         if len(item) >= 20 and not item.lower().startswith(("http", "https")):
             blobs.add(item)
-    # sometimes embedded strings are in quoted JSON or JS arrays; keep them too
     for item in re.findall(r'"([A-Za-z0-9+/=_-]{20,})"', text):
         blobs.add(item)
     for item in re.findall(r"'([A-Za-z0-9+/=_-]{20,})'", text):
@@ -340,7 +344,6 @@ def brute_force_numeric_cipher_links(text):
         return []
     keys = extract_numeric_keys(text)
     if not keys:
-        # 4-digit key may not appear explicitly in page; try the common range as a last resort
         keys = [str(i).zfill(4) for i in range(1000, 10000)]
 
     payloads = _extract_potential_cipher_payloads(text)
@@ -405,7 +408,6 @@ def extract_subscription_links_from_text(content):
     if cleaned:
         return cleaned
 
-    # 兼容 paste.to 这类带 4 位数字加密的页面：直接用数字密钥暴力尝试解密页面中的混淆串
     numeric_decoded = brute_force_numeric_cipher_links(content)
     if numeric_decoded:
         return numeric_decoded
@@ -413,56 +415,81 @@ def extract_subscription_links_from_text(content):
     return []
 
 
+def fetch_page_via_browser(url, timeout_seconds=30):
+    if sync_playwright is None:
+        return ""
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page(viewport={"width": 1440, "height": 2000})
+            page.goto(url, wait_until="domcontentloaded", timeout=timeout_seconds * 1000)
+            page.wait_for_timeout(3000)
+            html = page.content()
+            text = page.evaluate("() => document.body ? document.body.innerText || '' : ''")
+            browser.close()
+            return f"{html}\n{text}"
+    except Exception:
+        return ""
+
+
 def discover_paste_to_sources(url, session):
     if "paste.to" not in url.lower():
         return []
 
     discovered = []
+    page_content = ""
     try:
         response = session.get(url, timeout=20)
-        if response.status_code != 200:
-            return []
-        text = response.text or ""
-        discovered.extend(extract_subscription_links_from_text(text))
-
-        parsed = urllib.parse.urlparse(url)
-        raw_candidates = []
-        if parsed.query:
-            raw_candidates.extend([
-                f"https://paste.to/raw/{parsed.query.split('&', 1)[0]}",
-                f"https://paste.to/{parsed.query.split('&', 1)[0]}",
-            ])
-        if parsed.path and parsed.path not in ("/", ""):
-            path_id = parsed.path.strip("/")
-            if path_id and path_id not in {"?", ""}:
-                raw_candidates.extend([
-                    f"https://paste.to/raw/{path_id}",
-                    f"https://paste.to/{path_id}",
-                ])
-
-        fragment = parsed.fragment
-        if fragment:
-            raw_candidates.extend([
-                f"https://paste.to/raw/{fragment}",
-                f"https://paste.to/{fragment}",
-            ])
-
-        for candidate in list(dict.fromkeys(raw_candidates)):
-            if not candidate or "paste.to" not in candidate.lower():
-                continue
-            try:
-                raw_response = session.get(candidate, timeout=20)
-                if raw_response.status_code == 200:
-                    discovered.extend(extract_subscription_links_from_text(raw_response.text))
-            except Exception:
-                continue
-
-        # 若页面里是被 4 位数字密钥混淆过的订阅内容，则必须继续尝试全枚举
-        if not discovered:
-            discovered.extend(brute_force_numeric_cipher_links(text))
-
+        if response.status_code == 200:
+            page_content = response.text or ""
     except Exception:
-        return []
+        page_content = ""
+
+    browser_content = fetch_page_via_browser(url)
+    if browser_content:
+        page_content = browser_content if not page_content else page_content + "\n" + browser_content
+
+    if page_content:
+        discovered.extend(extract_subscription_links_from_text(page_content))
+
+    parsed = urllib.parse.urlparse(url)
+    raw_candidates = []
+    if parsed.query:
+        raw_candidates.extend([
+            f"https://paste.to/raw/{parsed.query.split('&', 1)[0]}",
+            f"https://paste.to/{parsed.query.split('&', 1)[0]}",
+        ])
+    if parsed.path and parsed.path not in ("/", ""):
+        path_id = parsed.path.strip("/")
+        if path_id and path_id not in {"?", ""}:
+            raw_candidates.extend([
+                f"https://paste.to/raw/{path_id}",
+                f"https://paste.to/{path_id}",
+            ])
+    fragment = parsed.fragment
+    if fragment:
+        raw_candidates.extend([
+            f"https://paste.to/raw/{fragment}",
+            f"https://paste.to/{fragment}",
+        ])
+
+    for candidate in list(dict.fromkeys(raw_candidates)):
+        if not candidate or "paste.to" not in candidate.lower():
+            continue
+        content = ""
+        try:
+            raw_response = session.get(candidate, timeout=20)
+            if raw_response.status_code == 200:
+                content = raw_response.text or ""
+        except Exception:
+            content = ""
+        if not content:
+            content = fetch_page_via_browser(candidate)
+        if content:
+            discovered.extend(extract_subscription_links_from_text(content))
+
+    if not discovered:
+        discovered.extend(brute_force_numeric_cipher_links(page_content or ""))
 
     return list(dict.fromkeys(discovered))
 
