@@ -5,6 +5,7 @@ import concurrent.futures
 import base64
 import json
 import urllib.parse
+import re
 import requests
 import yaml
 
@@ -16,6 +17,9 @@ STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "t
 MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "3000"))
 MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "99999"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
+DEFAULT_PASTE_TO_SOURCES = [
+    "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
+]
 
 
 def load_failure_stats():
@@ -34,6 +38,44 @@ def save_failure_stats(stats):
             json.dump(stats, f, ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"⚠️ 保存统计状态异常: {e}")
+
+
+def append_unique_source(source_url, filename="123.txt"):
+    if not source_url:
+        return False
+    source_url = str(source_url).strip()
+    if not source_url:
+        return False
+    if source_url.startswith("#"):
+        return False
+    if not source_url.lower().startswith(("http://", "https://")):
+        source_url = f"https://{source_url}"
+    source_url = source_url.split("#", 1)[0].strip()
+    if not source_url:
+        return False
+    if os.path.exists(filename):
+        with open(filename, "r", encoding="utf-8") as f:
+            existing = {line.strip() for line in f if line.strip()}
+        if source_url in existing:
+            return False
+    with open(filename, "a", encoding="utf-8") as f:
+        f.write(source_url + "\n")
+    return True
+
+
+def load_sources_from_file(filename="123.txt"):
+    if not os.path.exists(filename):
+        return []
+    sources = []
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    sources.append(line)
+    except Exception:
+        return []
+    return list(dict.fromkeys(sources))
 
 
 def update_123_txt_file(removed_urls):
@@ -239,6 +281,90 @@ def select_final_proxies(valid_proxies):
         seen.add(key)
         deduped.append(proxy)
     return deduped[:MAX_PROXY_OUTPUT]
+
+
+def extract_subscription_links_from_text(content):
+    if not content:
+        return []
+
+    candidate_urls = []
+    for match in re.findall(r'https?://[^\s\"\'<>]+', content):
+        candidate = match.rstrip(")].,;\n\r")
+        lower = candidate.lower()
+        if any(keyword in lower for keyword in ("clash", "yaml", "yml", "subscribe", "sub", "v2ray", "trojan", "vmess", "ss://", "ssr://")):
+            candidate_urls.append(candidate)
+            continue
+        if candidate.startswith("http") and any(token in lower for token in ("raw", "gist", "githubusercontent")):
+            candidate_urls.append(candidate)
+    cleaned = []
+    seen = set()
+    for url in candidate_urls:
+        href = urllib.parse.unquote(url)
+        if href not in seen:
+            seen.add(href)
+            cleaned.append(href)
+    return cleaned
+
+
+def discover_paste_to_sources(url, session):
+    if "paste.to" not in url.lower():
+        return []
+
+    discovered = []
+    try:
+        response = session.get(url, timeout=20)
+        if response.status_code != 200:
+            return []
+        text = response.text or ""
+        discovered.extend(extract_subscription_links_from_text(text))
+
+        parsed = urllib.parse.urlparse(url)
+        if parsed.query:
+            raw_candidates = [
+                f"https://paste.to/raw/{parsed.query.split('&', 1)[0]}",
+                f"https://paste.to/{parsed.query.split('&', 1)[0]}",
+            ]
+        else:
+            raw_candidates = []
+        if parsed.path and parsed.path not in ("/", ""):
+            path_id = parsed.path.strip("/")
+            if path_id and path_id not in {"?", ""}:
+                raw_candidates.extend([
+                    f"https://paste.to/raw/{path_id}",
+                    f"https://paste.to/{path_id}",
+                ])
+
+        raw_candidates.extend([
+            url.replace("paste.to/", "paste.to/raw/", 1) if "/" in url.split("paste.to/", 1)[1] else url,
+        ])
+
+        for candidate in list(dict.fromkeys(raw_candidates)):
+            if not candidate or "paste.to" not in candidate.lower():
+                continue
+            try:
+                raw_response = session.get(candidate, timeout=20)
+                if raw_response.status_code == 200:
+                    discovered.extend(extract_subscription_links_from_text(raw_response.text))
+            except Exception:
+                continue
+    except Exception:
+        return []
+
+    return list(dict.fromkeys(discovered))
+
+
+def auto_discover_source_urls(session):
+    discovered = []
+    sources = list(DEFAULT_PASTE_TO_SOURCES)
+    env_sources = os.environ.get("AUTO_PASTE_URLS", "")
+    if env_sources:
+        sources.extend([s.strip() for s in env_sources.split(",") if s.strip()])
+
+    for url in sources:
+        for found in discover_paste_to_sources(url, session):
+            if found not in discovered:
+                discovered.append(found)
+    return discovered
 
 
 # ==================== 万能订阅内容解析器 ====================
@@ -578,30 +704,37 @@ def main():
         failure_stats = load_failure_stats()
         removed_sources = []
 
-        source_urls = [
+        if not os.path.exists("123.txt"):
+            with open("123.txt", "w", encoding="utf-8") as f:
+                f.write("")
+
+        source_urls = []
+        source_urls.extend([
             "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
             "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
-        ]
+        ])
 
-        if os.path.exists("123.txt"):
-            try:
-                with open("123.txt", "r", encoding="utf-8") as f:
-                    for line in f:
-                        line = line.strip()
-                        if line and not line.startswith("#") and line not in source_urls:
-                            source_urls.append(line)
-                print(f"📄 已成功加载 123.txt 外部源，待检查总源数: {len(source_urls)}")
-            except Exception as e:
-                print(f"⚠️ 读取 123.txt 异常: {e}")
-
-        source_urls = list(dict.fromkeys(source_urls))
-        merged_proxies = []
-        source_health_report = []
+        for source in load_sources_from_file("123.txt"):
+            if source not in source_urls:
+                source_urls.append(source)
 
         session = requests.Session()
         session.headers.update({
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
         })
+
+        auto_paste_sources = auto_discover_source_urls(session)
+        for url in auto_paste_sources:
+            if url not in source_urls:
+                source_urls.append(url)
+            append_unique_source(url, "123.txt")
+
+        if auto_paste_sources:
+            print(f"🔍 自动发现 paste.to 订阅源: {len(auto_paste_sources)} 个")
+
+        source_urls = list(dict.fromkeys(source_urls))
+        merged_proxies = []
+        source_health_report = []
 
         for url in source_urls:
             print(f"\n📥 正在检查并抓取源: {url}")
@@ -623,8 +756,20 @@ def main():
                         is_success = True
                         print(f"✅ [健康] 解析成功 | 耗时: {source_info['latency']}ms | 有效节点: {node_count}个")
                     else:
-                        source_info["status"] = "🟡 解析无有效节点"
-                        print("⚠️ [警告] 链接可达但未解析出有效节点")
+                        if "paste.to" in url.lower():
+                            discovered = discover_paste_to_sources(url, session)
+                            for found_url in discovered:
+                                if append_unique_source(found_url, "123.txt"):
+                                    print(f"🧩 自动添加 paste.to 解析出的新订阅源: {found_url}")
+                            extracted = extract_proxies_from_content(res.text)
+                            if not extracted:
+                                source_info["status"] = "🟡 解析无有效节点"
+                                print("⚠️ [警告] 链接可达但未解析出有效节点")
+                                if discovered:
+                                    source_info["status"] = "🟢 paste.to 发现新订阅链接"
+                        else:
+                            source_info["status"] = "🟡 解析无有效节点"
+                            print("⚠️ [警告] 链接可达但未解析出有效节点")
                 else:
                     source_info["status"] = f"🔴 HTTP失效({res.status_code})"
                     print(f"❌ [失效] 状态码异常: {res.status_code}")
