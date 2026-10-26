@@ -17,11 +17,11 @@ except Exception:
 STATS_FILE = "source_stats.json"
 MAX_FAIL_COUNT = 3
 
-# 默认走“全量抓取 + 全量推送”模式；只有在显式打开 STRICT_FILTER_MODE=true 时才启用严格筛选
 STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "true"
 MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "3000"))
 MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "99999"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
+
 DEFAULT_PASTE_TO_SOURCES = [
     "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
     "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
@@ -29,10 +29,14 @@ DEFAULT_PASTE_TO_SOURCES = [
     "https://raw.githubusercontent.com/peasoft/No_FDroid/master/subscribe/clash.yml",
     "https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub/config.yaml",
     "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/special/normal.txt",
-    "https://raw.githubusercontent.com/ssrsub/ssr/master/ssrsub",
     "https://raw.githubusercontent.com/freefq/free/master/v2ray.txt",
+    "https://raw.githubusercontent.com/ssrsub/ssr/master/ssrsub",
     "https://raw.githubusercontent.com/zhangkaiitugithub/passwall/master/mix_1.yaml",
+    "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini.ini",
+    "https://raw.githubusercontent.com/snakeme/cf-speedtest/master/Clash.yaml",
+    "https://raw.githubusercontent.com/Leon406/SubMain/main/sub.yaml",
 ]
+
 PASTE_TO_SPECIAL_ID = "14372a45d5d8fbb7"
 PASTE_TO_SPECIAL_HASH = "771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb"
 
@@ -45,16 +49,28 @@ def normalize_source_url(source_url):
         return ""
     if not source_url.lower().startswith(("http://", "https://")):
         source_url = f"https://{source_url}"
-    try:
-        parsed = urllib.parse.urlsplit(source_url)
-        scheme = parsed.scheme.lower()
-        netloc = parsed.netloc.lower()
-        path = parsed.path.rstrip("/") or "/"
-        if netloc and path == "/" and not parsed.query:
-            return f"{scheme}://{netloc}"
-        return urllib.parse.urlunsplit((scheme, netloc, path, parsed.query, ""))
-    except Exception:
-        return source_url.split("#", 1)[0].strip()
+    source_url = source_url.split("#", 1)[0].strip()
+    if not source_url:
+        return ""
+    parsed = urllib.parse.urlsplit(source_url)
+    if not parsed.scheme or not parsed.netloc:
+        return ""
+    path = parsed.path.rstrip("/")
+    if path == "":
+        path = "/"
+    return urllib.parse.urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), path, parsed.query, ""))
+
+
+def dedupe_sources(urls):
+    seen = set()
+    result = []
+    for url in urls:
+        normalized = normalize_source_url(url)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        result.append(normalized)
+    return result
 
 
 def load_failure_stats():
@@ -76,16 +92,16 @@ def save_failure_stats(stats):
 
 
 def append_unique_source(source_url, filename="123.txt"):
-    normalized_url = normalize_source_url(source_url)
-    if not normalized_url:
+    normalized = normalize_source_url(source_url)
+    if not normalized:
         return False
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
             existing = {normalize_source_url(line) for line in f if normalize_source_url(line)}
-        if normalized_url in existing:
+        if normalized in existing:
             return False
     with open(filename, "a", encoding="utf-8") as f:
-        f.write(normalized_url + "\n")
+        f.write(normalized + "\n")
     return True
 
 
@@ -127,6 +143,25 @@ def update_123_txt_file(removed_urls):
             f.writelines(new_lines)
     except Exception as e:
         print(f"⚠️ 更新 123.txt 失败: {e}")
+
+
+def safe_get_url(session, url, timeout=15, max_retries=2):
+    last_error = None
+    for attempt in range(max_retries + 1):
+        try:
+            resp = session.get(url, timeout=timeout, allow_redirects=True)
+            if resp.status_code >= 500 and attempt < max_retries:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+            return resp
+        except Exception as exc:
+            last_error = exc
+            if attempt < max_retries:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError(f"请求失败: {url}")
 
 
 def country_code_to_emoji(country_code):
@@ -298,7 +333,6 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
 
 
 def select_final_proxies(valid_proxies):
-    # 默认全量推送：只做 server+port 去重，并限制最多输出数量
     if STRICT_FILTER_MODE:
         return strict_filter_proxies(valid_proxies, MAX_PROXY_OUTPUT, MAX_LATENCY_MS)
 
@@ -394,13 +428,13 @@ def brute_force_numeric_cipher_links(text):
                 if not decoded:
                     continue
                 if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
-                    for match in re.findall(r'https?://[^\s"\'<>]+', decoded):
-                        candidate = match.rstrip(")] . ,;\n\r")
+                    for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
+                        candidate = match.rstrip(")].,;\n\r")
                         if candidate and candidate not in seen:
                             seen.add(candidate)
                             found.append(candidate)
-                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s"\'<>]+', decoded):
-                        candidate = match.rstrip(")] . ,;\n\r")
+                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
+                        candidate = match.rstrip(")].,;\n\r")
                         if candidate and candidate not in seen:
                             seen.add(candidate)
                             found.append(candidate)
@@ -412,24 +446,24 @@ def brute_force_numeric_cipher_links(text):
 def extract_subscription_links_from_text(content):
     if not content:
         return []
-
     candidate_urls = []
-    for match in re.findall(r'https?://[^\s"\'<>]+', content):
-        candidate = match.rstrip(")] . ,;\n\r")
+    for match in re.findall(r'https?://[^\s\"\'<>]+', content):
+        candidate = match.rstrip(")].,;\n\r")
         lower = candidate.lower()
         if any(keyword in lower for keyword in ("clash", "yaml", "yml", "subscribe", "sub", "v2ray", "trojan", "vmess", "ss://", "ssr://")):
             candidate_urls.append(candidate)
             continue
         if candidate.startswith("http") and any(token in lower for token in ("raw", "gist", "githubusercontent")):
             candidate_urls.append(candidate)
+
     cleaned = []
     seen = set()
     for url in candidate_urls:
         href = urllib.parse.unquote(url)
-        normalized = normalize_source_url(href)
-        if normalized and normalized not in seen:
-            seen.add(normalized)
-            cleaned.append(normalized)
+        normal = normalize_source_url(href)
+        if normal and normal not in seen:
+            seen.add(normal)
+            cleaned.append(normal)
 
     if cleaned:
         return cleaned
@@ -437,7 +471,6 @@ def extract_subscription_links_from_text(content):
     numeric_decoded = brute_force_numeric_cipher_links(content)
     if numeric_decoded:
         return [normalize_source_url(url) for url in numeric_decoded if normalize_source_url(url)]
-
     return []
 
 
@@ -456,25 +489,6 @@ def fetch_page_via_browser(url, timeout_seconds=30):
             return f"{html}\n{text}"
     except Exception:
         return ""
-
-
-def safe_get_url(session, url, timeout=15, max_retries=2):
-    last_error = None
-    for attempt in range(max_retries + 1):
-        try:
-            response = session.get(url, timeout=timeout, allow_redirects=True)
-            if response.status_code >= 500 and attempt < max_retries:
-                time.sleep(0.5 * (attempt + 1))
-                continue
-            return response
-        except Exception as exc:
-            last_error = exc
-            if attempt < max_retries:
-                time.sleep(0.5 * (attempt + 1))
-                continue
-    if last_error is not None:
-        raise last_error
-    raise RuntimeError(f"请求失败: {url}")
 
 
 def build_special_paste_candidates(url):
@@ -518,7 +532,6 @@ def build_special_paste_candidates(url):
 def discover_paste_to_sources(url, session):
     if "paste.to" not in url.lower():
         return []
-
     discovered = []
     page_content = ""
 
@@ -617,7 +630,7 @@ def auto_discover_source_urls(session):
         for found in discover_paste_to_sources(normalized, session):
             if found not in discovered:
                 discovered.append(found)
-    return discovered
+    return dedupe_sources(discovered)
 
 
 # ==================== 万能订阅内容解析器 ====================
@@ -962,14 +975,15 @@ def main():
                 f.write("")
 
         source_urls = []
-        for source in list(DEFAULT_PASTE_TO_SOURCES):
+        for source in DEFAULT_PASTE_TO_SOURCES:
             normalized = normalize_source_url(source)
             if normalized:
                 source_urls.append(normalized)
 
         for source in load_sources_from_file("123.txt"):
-            if source not in source_urls:
-                source_urls.append(source)
+            source_urls.append(source)
+
+        source_urls = dedupe_sources(source_urls)
 
         session = requests.Session()
         session.headers.update({
@@ -985,7 +999,7 @@ def main():
         if auto_paste_sources:
             print(f"🔍 自动发现 paste.to 订阅源: {len(auto_paste_sources)} 个")
 
-        source_urls = list(dict.fromkeys(source_urls))
+        source_urls = dedupe_sources(source_urls)
         merged_proxies = []
         source_health_report = []
 
