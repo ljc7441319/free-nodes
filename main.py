@@ -289,14 +289,41 @@ def test_tcp_latency(server, port, timeout=3):
         return None
 
 
+def protocol_priority(proxy):
+    ptype = str(proxy.get("type", "unknown")).lower()
+    if ptype == "trojan":
+        return 0
+    if ptype == "vmess":
+        return 1
+    if ptype == "ss":
+        return 2
+    if ptype == "ssr":
+        return 3
+    return 4
+
+
 def proxy_priority(proxy):
     latency = float(proxy.get("latency", 99999))
     country = str(proxy.get("geo_country", "其他")).strip()
+    ptype = str(proxy.get("type", "unknown")).lower()
+
     score = latency
-    if country in ("其他", "未知"):
-        score += 300
-    if proxy.get("type") in {"ssr", "unknown"}:
-        score += 120
+    if country in ("其他", "未知", ""):
+        score += 400
+    if ptype in {"ssr", "unknown"}:
+        score += 250
+    elif ptype == "trojan":
+        score -= 30
+    elif ptype == "vmess":
+        score -= 20
+    elif ptype == "ss":
+        score -= 10
+
+    if latency <= 200:
+        score -= 20
+    elif latency <= 600:
+        score -= 5
+
     return score
 
 
@@ -306,46 +333,94 @@ def strict_filter_proxies(valid_proxies, max_output=None, max_latency_ms=None):
     if max_latency_ms is None:
         max_latency_ms = MAX_LATENCY_MS
 
-    strict = []
+    candidates = []
     for proxy in valid_proxies:
+        proxy = ensure_safe_proxy(proxy)
+        if not proxy:
+            continue
         latency = float(proxy.get("latency", 99999))
         country = str(proxy.get("geo_country", "其他")).strip()
+        ptype = str(proxy.get("type", "unknown")).lower()
+
         if latency > max_latency_ms:
             continue
-        if country in ("其他", "未知"):
+        if country in ("其他", "未知", ""):
             continue
-        strict.append(proxy)
+        if ptype in {"ssr", "unknown"}:
+            continue
+        candidates.append(proxy)
 
-    if not strict:
-        strict = [p for p in valid_proxies if float(p.get("latency", 99999)) <= max_latency_ms]
+    if not candidates:
+        for proxy in valid_proxies:
+            proxy = ensure_safe_proxy(proxy)
+            if not proxy:
+                continue
+            latency = float(proxy.get("latency", 99999))
+            if latency <= max_latency_ms:
+                candidates.append(proxy)
 
-    strict.sort(key=lambda p: (proxy_priority(p), p.get("latency", 99999)))
+    if not candidates:
+        return []
+
+    candidates.sort(key=lambda p: (proxy_priority(p), protocol_priority(p), p.get("latency") or 999999, p.get("geo_country") == "其他"))
 
     deduped = []
     seen = set()
-    for proxy in strict:
+    for proxy in candidates:
         key = (str(proxy.get("server", "")).lower(), int(proxy.get("port", 0)))
         if key in seen:
             continue
         seen.add(key)
         deduped.append(proxy)
+        if len(deduped) >= max_output:
+            break
 
-    return deduped[:max_output]
+    return deduped
 
 
 def select_final_proxies(valid_proxies):
+    if not valid_proxies:
+        return []
+
     if STRICT_FILTER_MODE:
         return strict_filter_proxies(valid_proxies, MAX_PROXY_OUTPUT, MAX_LATENCY_MS)
 
+    ranked = []
+    for proxy in valid_proxies:
+        proxy = ensure_safe_proxy(proxy)
+        if not proxy:
+            continue
+        latency = float(proxy.get("latency", 99999))
+        country = str(proxy.get("geo_country", "其他")).strip()
+        ptype = str(proxy.get("type", "unknown")).lower()
+
+        if latency == 99999 and country in ("其他", "未知", ""):
+            proxy["_quality_score"] = 100000
+        else:
+            proxy["_quality_score"] = proxy_priority(proxy)
+
+        if country in ("其他", "未知", "") and len(valid_proxies) > 30 and ptype in {"ssr", "unknown"}:
+            continue
+
+        ranked.append(proxy)
+
+    if not ranked:
+        ranked = [ensure_safe_proxy(p) for p in valid_proxies if ensure_safe_proxy(p)]
+
+    ranked.sort(key=lambda p: (p.get("_quality_score", 999999), protocol_priority(p), p.get("latency") or 999999, p.get("geo_country") == "其他"))
+
     deduped = []
     seen = set()
-    for proxy in sorted(valid_proxies, key=lambda p: (p.get("latency") is None, p.get("latency") or 999999, p.get("geo_country") == "其他")):
+    for proxy in ranked:
         key = (str(proxy.get("server", "")).lower(), int(proxy.get("port", 0)))
         if key in seen:
             continue
         seen.add(key)
         deduped.append(proxy)
-    return deduped[:MAX_PROXY_OUTPUT]
+        if len(deduped) >= MAX_PROXY_OUTPUT:
+            break
+
+    return deduped
 
 
 def extract_numeric_keys(text):
