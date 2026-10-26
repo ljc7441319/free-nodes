@@ -24,9 +24,37 @@ MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "99999"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
 DEFAULT_PASTE_TO_SOURCES = [
     "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
+    "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
+    "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
+    "https://raw.githubusercontent.com/peasoft/No_FDroid/master/subscribe/clash.yml",
+    "https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub/config.yaml",
+    "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/special/normal.txt",
+    "https://raw.githubusercontent.com/ssrsub/ssr/master/ssrsub",
+    "https://raw.githubusercontent.com/freefq/free/master/v2ray.txt",
+    "https://raw.githubusercontent.com/zhangkaiitugithub/passwall/master/mix_1.yaml",
 ]
 PASTE_TO_SPECIAL_ID = "14372a45d5d8fbb7"
 PASTE_TO_SPECIAL_HASH = "771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb"
+
+
+def normalize_source_url(source_url):
+    if not source_url:
+        return ""
+    source_url = str(source_url).strip()
+    if not source_url or source_url.startswith("#"):
+        return ""
+    if not source_url.lower().startswith(("http://", "https://")):
+        source_url = f"https://{source_url}"
+    try:
+        parsed = urllib.parse.urlsplit(source_url)
+        scheme = parsed.scheme.lower()
+        netloc = parsed.netloc.lower()
+        path = parsed.path.rstrip("/") or "/"
+        if netloc and path == "/" and not parsed.query:
+            return f"{scheme}://{netloc}"
+        return urllib.parse.urlunsplit((scheme, netloc, path, parsed.query, ""))
+    except Exception:
+        return source_url.split("#", 1)[0].strip()
 
 
 def load_failure_stats():
@@ -48,25 +76,16 @@ def save_failure_stats(stats):
 
 
 def append_unique_source(source_url, filename="123.txt"):
-    if not source_url:
-        return False
-    source_url = str(source_url).strip()
-    if not source_url:
-        return False
-    if source_url.startswith("#"):
-        return False
-    if not source_url.lower().startswith(("http://", "https://")):
-        source_url = f"https://{source_url}"
-    source_url = source_url.split("#", 1)[0].strip()
-    if not source_url:
+    normalized_url = normalize_source_url(source_url)
+    if not normalized_url:
         return False
     if os.path.exists(filename):
         with open(filename, "r", encoding="utf-8") as f:
-            existing = {line.strip() for line in f if line.strip()}
-        if source_url in existing:
+            existing = {normalize_source_url(line) for line in f if normalize_source_url(line)}
+        if normalized_url in existing:
             return False
     with open(filename, "a", encoding="utf-8") as f:
-        f.write(source_url + "\n")
+        f.write(normalized_url + "\n")
     return True
 
 
@@ -74,15 +93,18 @@ def load_sources_from_file(filename="123.txt"):
     if not os.path.exists(filename):
         return []
     sources = []
+    seen = set()
     try:
         with open(filename, "r", encoding="utf-8") as f:
             for line in f:
-                line = line.strip()
-                if line and not line.startswith("#"):
-                    sources.append(line)
+                normalized = normalize_source_url(line)
+                if not normalized or normalized in seen:
+                    continue
+                seen.add(normalized)
+                sources.append(normalized)
     except Exception:
         return []
-    return list(dict.fromkeys(sources))
+    return sources
 
 
 def update_123_txt_file(removed_urls):
@@ -92,10 +114,11 @@ def update_123_txt_file(removed_urls):
         with open("123.txt", "r", encoding="utf-8") as f:
             lines = f.readlines()
 
+        removed = {normalize_source_url(url) for url in removed_urls if normalize_source_url(url)}
         new_lines = []
         for line in lines:
-            clean_line = line.strip()
-            if clean_line in removed_urls:
+            clean_line = normalize_source_url(line)
+            if clean_line in removed:
                 print(f"🗑️ 已自动从 123.txt 中淘汰并清理失效源: {clean_line}")
                 continue
             new_lines.append(line)
@@ -371,13 +394,13 @@ def brute_force_numeric_cipher_links(text):
                 if not decoded:
                     continue
                 if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
-                    for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
-                        candidate = match.rstrip(")].,;\n\r")
+                    for match in re.findall(r'https?://[^\s"\'<>]+', decoded):
+                        candidate = match.rstrip(")] . ,;\n\r")
                         if candidate and candidate not in seen:
                             seen.add(candidate)
                             found.append(candidate)
-                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
-                        candidate = match.rstrip(")].,;\n\r")
+                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s"\'<>]+', decoded):
+                        candidate = match.rstrip(")] . ,;\n\r")
                         if candidate and candidate not in seen:
                             seen.add(candidate)
                             found.append(candidate)
@@ -391,8 +414,8 @@ def extract_subscription_links_from_text(content):
         return []
 
     candidate_urls = []
-    for match in re.findall(r'https?://[^\s\"\'<>]+', content):
-        candidate = match.rstrip(")].,;\n\r")
+    for match in re.findall(r'https?://[^\s"\'<>]+', content):
+        candidate = match.rstrip(")] . ,;\n\r")
         lower = candidate.lower()
         if any(keyword in lower for keyword in ("clash", "yaml", "yml", "subscribe", "sub", "v2ray", "trojan", "vmess", "ss://", "ssr://")):
             candidate_urls.append(candidate)
@@ -403,16 +426,17 @@ def extract_subscription_links_from_text(content):
     seen = set()
     for url in candidate_urls:
         href = urllib.parse.unquote(url)
-        if href not in seen:
-            seen.add(href)
-            cleaned.append(href)
+        normalized = normalize_source_url(href)
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            cleaned.append(normalized)
 
     if cleaned:
         return cleaned
 
     numeric_decoded = brute_force_numeric_cipher_links(content)
     if numeric_decoded:
-        return numeric_decoded
+        return [normalize_source_url(url) for url in numeric_decoded if normalize_source_url(url)]
 
     return []
 
@@ -432,6 +456,25 @@ def fetch_page_via_browser(url, timeout_seconds=30):
             return f"{html}\n{text}"
     except Exception:
         return ""
+
+
+def safe_get_url(session, url, timeout=15, max_retries=2):
+    last_error = None
+    for attempt in range(max_retries + 1):
+        try:
+            response = session.get(url, timeout=timeout, allow_redirects=True)
+            if response.status_code >= 500 and attempt < max_retries:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+            return response
+        except Exception as exc:
+            last_error = exc
+            if attempt < max_retries:
+                time.sleep(0.5 * (attempt + 1))
+                continue
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError(f"请求失败: {url}")
 
 
 def build_special_paste_candidates(url):
@@ -480,7 +523,7 @@ def discover_paste_to_sources(url, session):
     page_content = ""
 
     try:
-        response = session.get(url, timeout=20)
+        response = safe_get_url(session, url, timeout=20, max_retries=2)
         if response.status_code == 200:
             page_content = response.text or ""
     except Exception:
@@ -497,7 +540,7 @@ def discover_paste_to_sources(url, session):
         for candidate in build_special_paste_candidates(url):
             leads = []
             try:
-                r = session.get(candidate, timeout=20)
+                r = safe_get_url(session, candidate, timeout=20, max_retries=2)
                 if r.status_code == 200:
                     leads.append(r.text or "")
             except Exception:
@@ -537,7 +580,7 @@ def discover_paste_to_sources(url, session):
             continue
         content = ""
         try:
-            raw_response = session.get(candidate, timeout=20)
+            raw_response = safe_get_url(session, candidate, timeout=20, max_retries=2)
             if raw_response.status_code == 200:
                 content = raw_response.text or ""
         except Exception:
@@ -550,7 +593,14 @@ def discover_paste_to_sources(url, session):
     if not discovered:
         discovered.extend(brute_force_numeric_cipher_links(page_content or ""))
 
-    return list(dict.fromkeys(discovered))
+    unique = []
+    seen = set()
+    for item in discovered:
+        normalized = normalize_source_url(item)
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            unique.append(normalized)
+    return unique
 
 
 def auto_discover_source_urls(session):
@@ -561,7 +611,10 @@ def auto_discover_source_urls(session):
         sources.extend([s.strip() for s in env_sources.split(",") if s.strip()])
 
     for url in sources:
-        for found in discover_paste_to_sources(url, session):
+        normalized = normalize_source_url(url)
+        if not normalized:
+            continue
+        for found in discover_paste_to_sources(normalized, session):
             if found not in discovered:
                 discovered.append(found)
     return discovered
@@ -909,10 +962,10 @@ def main():
                 f.write("")
 
         source_urls = []
-        source_urls.extend([
-            "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
-            "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
-        ])
+        for source in list(DEFAULT_PASTE_TO_SOURCES):
+            normalized = normalize_source_url(source)
+            if normalized:
+                source_urls.append(normalized)
 
         for source in load_sources_from_file("123.txt"):
             if source not in source_urls:
@@ -937,13 +990,17 @@ def main():
         source_health_report = []
 
         for url in source_urls:
+            normalized_url = normalize_source_url(url)
+            if not normalized_url:
+                continue
+            url = normalized_url
             print(f"\n📥 正在检查并抓取源: {url}")
             start_t = time.time()
             source_info = {"url": url, "status": "未知", "nodes": 0, "latency": 0}
             is_success = False
 
             try:
-                res = session.get(url, timeout=15)
+                res = safe_get_url(session, url, timeout=15, max_retries=2)
                 source_info["latency"] = round((time.time() - start_t) * 1000, 2)
 
                 if res.status_code == 200:
