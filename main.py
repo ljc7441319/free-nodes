@@ -35,6 +35,7 @@ DEFAULT_PASTE_TO_SOURCES = [
     "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini.ini",
     "https://raw.githubusercontent.com/snakeme/cf-speedtest/master/Clash.yaml",
     "https://raw.githubusercontent.com/Leon406/SubMain/main/sub.yaml",
+    "https://www.85la.com/",
 ]
 
 PASTE_TO_SPECIAL_ID = "14372a45d5d8fbb7"
@@ -428,13 +429,13 @@ def brute_force_numeric_cipher_links(text):
                 if not decoded:
                     continue
                 if any(marker in decoded.lower() for marker in ("http://", "https://", "vmess://", "ss://", "trojan://", "clash", "subscribe", "yaml", "yml")):
-                    for match in re.findall(r'https?://[^\s\"\'<>]+', decoded):
-                        candidate = match.rstrip(")].,;\n\r")
+                    for match in re.findall(r'https?://[^\s"\'<>]+', decoded):
+                        candidate = match.rstrip(")] . ,;\n\r")
                         if candidate and candidate not in seen:
                             seen.add(candidate)
                             found.append(candidate)
-                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s\"\'<>]+', decoded):
-                        candidate = match.rstrip(")].,;\n\r")
+                    for match in re.findall(r'(?:vmess://|ss://|trojan://)[^\s"\'<>]+', decoded):
+                        candidate = match.rstrip(")] . ,;\n\r")
                         if candidate and candidate not in seen:
                             seen.add(candidate)
                             found.append(candidate)
@@ -447,8 +448,8 @@ def extract_subscription_links_from_text(content):
     if not content:
         return []
     candidate_urls = []
-    for match in re.findall(r'https?://[^\s\"\'<>]+', content):
-        candidate = match.rstrip(")].,;\n\r")
+    for match in re.findall(r'https?://[^\s"\'<>]+', content):
+        candidate = match.rstrip(")] . ,;\n\r")
         lower = candidate.lower()
         if any(keyword in lower for keyword in ("clash", "yaml", "yml", "subscribe", "sub", "v2ray", "trojan", "vmess", "ss://", "ssr://")):
             candidate_urls.append(candidate)
@@ -616,6 +617,47 @@ def discover_paste_to_sources(url, session):
     return unique
 
 
+def discover_85la_sources(url, session):
+    if "85la.com" not in url.lower():
+        return []
+
+    page_content = ""
+    try:
+        response = safe_get_url(session, url, timeout=20, max_retries=2)
+        if response.status_code == 200:
+            page_content = response.text or ""
+    except Exception:
+        page_content = ""
+
+    if not page_content:
+        page_content = fetch_page_via_browser(url)
+    if not page_content:
+        return []
+
+    candidates = []
+    for match in re.findall(r'''href=["']?(https?://[^"'\s>]+)["']?''', page_content, flags=re.IGNORECASE):
+        candidates.append(match.rstrip(")] . ,;\n\r"))
+    for match in re.findall(r'https?://[^\s"\'<>]+', page_content):
+        candidates.append(match.rstrip(")] . ,;\n\r"))
+
+    discovered = extract_subscription_links_from_text(page_content)
+    for candidate in candidates:
+        lower = candidate.lower()
+        if not lower.startswith("http"):
+            continue
+        if any(token in lower for token in ("clash", "yaml", "yml", "subscribe", "sub", "v2ray", "vmess", "trojan", "ssr", "ss://", "githubusercontent", "raw.")):
+            discovered.append(candidate)
+
+    unique = []
+    seen = set()
+    for item in discovered:
+        normalized = normalize_source_url(item)
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            unique.append(normalized)
+    return unique
+
+
 def auto_discover_source_urls(session):
     discovered = []
     sources = list(DEFAULT_PASTE_TO_SOURCES)
@@ -627,9 +669,14 @@ def auto_discover_source_urls(session):
         normalized = normalize_source_url(url)
         if not normalized:
             continue
-        for found in discover_paste_to_sources(normalized, session):
-            if found not in discovered:
-                discovered.append(found)
+        if "paste.to" in normalized.lower():
+            for found in discover_paste_to_sources(normalized, session):
+                if found not in discovered:
+                    discovered.append(found)
+        elif "85la.com" in normalized.lower():
+            for found in discover_85la_sources(normalized, session):
+                if found not in discovered:
+                    discovered.append(found)
     return dedupe_sources(discovered)
 
 
@@ -997,7 +1044,7 @@ def main():
             append_unique_source(url, "123.txt")
 
         if auto_paste_sources:
-            print(f"🔍 自动发现 paste.to 订阅源: {len(auto_paste_sources)} 个")
+            print(f"🔍 自动发现订阅源: {len(auto_paste_sources)} 个")
 
         source_urls = dedupe_sources(source_urls)
         merged_proxies = []
@@ -1038,6 +1085,17 @@ def main():
                                 print("⚠️ [警告] 链接可达但未解析出有效节点")
                                 if discovered:
                                     source_info["status"] = "🟢 paste.to 发现新订阅链接"
+                        elif "85la.com" in url.lower():
+                            discovered = discover_85la_sources(url, session)
+                            for found_url in discovered:
+                                if append_unique_source(found_url, "123.txt"):
+                                    print(f"🧩 自动添加 85la 解析出的新订阅源: {found_url}")
+                            extracted = extract_proxies_from_content(res.text)
+                            if not extracted:
+                                source_info["status"] = "🟡 解析无有效节点"
+                                print("⚠️ [警告] 85la 页面可达但未解析出有效节点")
+                                if discovered:
+                                    source_info["status"] = "🟢 85la 发现新订阅链接"
                         else:
                             source_info["status"] = "🟡 解析无有效节点"
                             print("⚠️ [警告] 链接可达但未解析出有效节点")
