@@ -39,3 +39,4 @@ jobs:
           git add sub/
           git diff --staged --quiet || git commit -m "Auto-update nodes and subscriptions [skip ci]"
           git push
+          git add 123.txt source_stats.json sub/
