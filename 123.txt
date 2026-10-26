@@ -1,7 +1,7 @@
 https://gist.githubusercontent.com/meitan16/51fe97c47acc42ab91dc1a0ecd273592/raw/c8792ddb2e5307a243949c19f8401280a80375dd/nodes.yaml
 https://gist.githubusercontent.com/guidongone/3c8de2f9a2c6b85e7b84e952a52d432d/raw/a1c1e42b22a6322e17b0d5118eec2a957b03c3c1/Clash261016.yaml
 https://drive.google.com/uc?export=download&id=1zga-C-lVEtGOhq86uCn5GS8lx2wndIHb
-https://drive.google.com/uc?export=download&id=1hItQM0miZwrQlWO2l1fwUNeQxbK9wd6B
+https://drive.google.com/uc?export=download&id=1hItQM0miZwrQlWO2l1fwUNeQxbJ9wd6B
 https://gist.githubusercontent.com/guidongone/c618b6bb8fb1c63a1577ab3db9efb45c/raw/6e91831de15e456bf9a801917c18e65b22e0facb/Clash261018.yaml
 https://sfc.twpp.ccwu.cc/YouTube/dnnE18/c.yaml
 https://www.yudou89.shop/202610/20261018mec8ta.yaml
@@ -21,3 +21,4 @@ https://drive.google.com/uc?export=download&id=1l23I55CbEai4bCWpipqQ3L2oAEYNoKZ1
 https://www.yudou89.shop/202610/20261026mx6eta.yaml
 https://gist.githubusercontent.com/meitan16/3d57788458580f3962d0164299e68415/raw/ec44e2a20568691c892f0d4b7eca17025d04aa15/nodes.yaml
 https://www.qilan.de/api/subscription/333d22386b3030b560b929845a8a373de1c46e72754dc85e
+https://www.85la.com/
