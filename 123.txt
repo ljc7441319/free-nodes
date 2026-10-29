@@ -25,3 +25,4 @@ https://paste.to/raw/raw/raw/raw/raw/raw/raw/14372a45d5d8fbb7
 https://www.85la.com/internet-access/free-network-nodes
 https://nodebuf.com/s/bLpULbo0ZlK7mdV7dTjd4fD_
 https://drive.google.com/uc?export=download&id=1XHdNXpu9QmPKVd0qI3fSS351O9CCzFul
+https://gist.githubusercontent.com/guidongone/e04885b36955a61f22a13d0e0160ceb3/raw/d220286f09dd74712d6977295f47ab1492c3fa19/Clash261029.yaml
