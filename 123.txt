@@ -26,3 +26,4 @@ https://www.85la.com/internet-access/free-network-nodes
 https://nodebuf.com/s/bLpULbo0ZlK7mdV7dTjd4fD_
 https://drive.google.com/uc?export=download&id=1XHdNXpu9QmPKVd0qI3fSS351O9CCzFul
 https://gist.githubusercontent.com/guidongone/e04885b36955a61f22a13d0e0160ceb3/raw/d220286f09dd74712d6977295f47ab1492c3fa19/Clash261029.yaml
+https://gist.githubusercontent.com/meitan16/33a53d14ae7ba7d23b78f1eb7c0e048d/raw/b25904d6e959961c0a0d61594c539118b0fd0541/nodes.yaml
