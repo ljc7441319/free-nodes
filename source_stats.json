@@ -1,31 +1,220 @@
 {
-  "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml": 0,
-  "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml": 0,
-  "https://gist.githubusercontent.com/meitan16/51fe97c47acc42ab91dc1a0ecd273592/raw/c8792ddb2e5307a243949c19f8401280a80375dd/nodes.yaml": 0,
-  "https://gist.githubusercontent.com/guidongone/3c8de2f9a2c6b85e7b84e952a52d432d/raw/a1c1e42b22a6322e17b0d5118eec2a957b03c3c1/Clash261016.yaml": 0,
-  "https://drive.google.com/uc?export=download&id=1zga-C-lVEtGOhq86uCn5GS8lx2wndIHb": 0,
-  "https://drive.google.com/uc?export=download&id=1hItQM0miZwrQlWO2l1fwUNeQxbK9wd6B": 0,
-  "https://gist.githubusercontent.com/guidongone/c618b6bb8fb1c63a1577ab3db9efb45c/raw/6e91831de15e456bf9a801917c18e65b22e0facb/Clash261018.yaml": 0,
-  "https://sfc.twpp.ccwu.cc/YouTube/dnnE18/c.yaml": 0,
-  "https://www.yudou89.shop/202610/20261018mec8ta.yaml": 0,
-  "https://drive.google.com/uc?export=download&id=1EAyF7HbQqFj2UcQAeJBZx1QW9Crl7N0v": 0,
-  "https://gist.githubusercontent.com/guidongone/2fb41043e8327b76ab6e3f9cffce3cd2/raw/f57af3af7f83760a3ed3b12001ab408060d33e39/Clash261021.yaml": 0,
-  "https://tt.vg/OGheE5h": 0,
-  "https://gist.githubusercontent.com/meitan16/49dd8d3c14b0371c71afe486ad17fba6/raw/ceba5fea4b953a1737065f0628d0a7015d9325db/nodes.yaml": 0,
-  "https://www.yudou89.shop/202610/20261021mex6ta.yaml": 0,
-  "https://drive.google.com/uc?export=download&id=1fH35OFKczng4ipMbcNJEU3pvfJIhVIW9": 0,
-  "https://gist.githubusercontent.com/guidongone/6740aaee003e1c014038c06c5b633b89/raw/7321a27d10ec4f4af517f804a2919ef69755cac0/Clash261022.yaml": 0,
-  "https://www.85la.com/": 2,
-  "https://drive.google.com/uc?export=download&id=1hItQM0miZwrQlWO2l1fwUNeQxbJ9wd6B": 2,
-  "https://paste.to/raw/raw/raw/raw/raw/14372a45d5d8fbb7": 2,
-  "https://sfc.twpp.ccwu.cc/YouTube/vNov26/c.yaml": 0,
-  "https://drive.google.com/uc?export=download&id=1l23I55CbEai4bCWpipqQ3L2oAEYNoKZ1": 0,
-  "https://www.yudou89.shop/202610/20261026mx6eta.yaml": 0,
-  "https://gist.githubusercontent.com/meitan16/3d57788458580f3962d0164299e68415/raw/ec44e2a20568691c892f0d4b7eca17025d04aa15/nodes.yaml": 0,
-  "https://www.qilan.de/api/subscription/333d22386b3030b560b929845a8a373de1c46e72754dc85e": 0,
-  "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini.ini": 1,
-  "https://raw.githubusercontent.com/snakeme/cf-speedtest/master/Clash.yaml": 1,
-  "https://raw.githubusercontent.com/Leon406/SubMain/main/sub.yaml": 1,
-  "https://paste.to/raw/raw/14372a45d5d8fbb7": 1,
-  "https://paste.to/raw/raw/raw/raw/raw/raw/14372a45d5d8fbb7": 1
+  "updated_at": "2026-11-02T01:00:24Z",
+  "total_sources": 42,
+  "success_count": 23,
+  "empty_count": 8,
+  "error_count": 11,
+  "filtered_count": 0,
+  "items": [
+    {
+      "url": "https://gist.githubusercontent.com/meitan16/51fe97c47acc42ab91dc1a0ecd273592/raw/c8792ddb2e5307a243949c19f8401280a80375dd/nodes.yaml",
+      "status": "ok",
+      "count": 175
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/3c8de2f9a2c6b85e7b84e952a52d432d/raw/a1c1e42b22a6322e17b0d5118eec2a957b03c3c1/Clash261016.yaml",
+      "status": "ok",
+      "count": 143
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1zga-C-lVEtGOhq86uCn5GS8lx2wndIHb",
+      "status": "ok",
+      "count": 205
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1hItQM0miZwrQlWO2l1fwUNeQxbJ9wd6B",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/c618b6bb8fb1c63a1577ab3db9efb45c/raw/6e91831de15e456bf9a801917c18e65b22e0facb/Clash261018.yaml",
+      "status": "ok",
+      "count": 72
+    },
+    {
+      "url": "https://sfc.twpp.ccwu.cc/YouTube/dnnE18/c.yaml",
+      "status": "ok",
+      "count": 29
+    },
+    {
+      "url": "https://www.yudou89.shop/202610/20261018mec8ta.yaml",
+      "status": "ok",
+      "count": 175
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1EAyF7HbQqFj2UcQAeJBZx1QW9Crl7N0v",
+      "status": "ok",
+      "count": 200
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/2fb41043e8327b76ab6e3f9cffce3cd2/raw/f57af3af7f83760a3ed3b12001ab408060d33e39/Clash261021.yaml",
+      "status": "ok",
+      "count": 346
+    },
+    {
+      "url": "https://tt.vg/OGheE5h",
+      "status": "ok",
+      "count": 473
+    },
+    {
+      "url": "https://gist.githubusercontent.com/meitan16/49dd8d3c14b0371c71afe486ad17fba6/raw/ceba5fea4b953a1737065f0628d0a7015d9325db/nodes.yaml",
+      "status": "ok",
+      "count": 210
+    },
+    {
+      "url": "https://www.yudou89.shop/202610/20261021mex6ta.yaml",
+      "status": "ok",
+      "count": 210
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1fH35OFKczng4ipMbcNJEU3pvfJIhVIW9",
+      "status": "ok",
+      "count": 184
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/6740aaee003e1c014038c06c5b633b89/raw/7321a27d10ec4f4af517f804a2919ef69755cac0/Clash261022.yaml",
+      "status": "ok",
+      "count": 117
+    },
+    {
+      "url": "https://paste.to/raw/raw/raw/raw/raw/14372a45d5d8fbb7",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://sfc.twpp.ccwu.cc/YouTube/vNov26/c.yaml",
+      "status": "ok",
+      "count": 29
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1l23I55CbEai4bCWpipqQ3L2oAEYNoKZ1",
+      "status": "ok",
+      "count": 183
+    },
+    {
+      "url": "https://www.yudou89.shop/202610/20261026mx6eta.yaml",
+      "status": "ok",
+      "count": 110
+    },
+    {
+      "url": "https://gist.githubusercontent.com/meitan16/3d57788458580f3962d0164299e68415/raw/ec44e2a20568691c892f0d4b7eca17025d04aa15/nodes.yaml",
+      "status": "ok",
+      "count": 110
+    },
+    {
+      "url": "https://www.qilan.de/api/subscription/333d22386b3030b560b929845a8a373de1c46e72754dc85e",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://paste.to/raw/raw/14372a45d5d8fbb7",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://paste.to/raw/raw/raw/raw/raw/raw/14372a45d5d8fbb7",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://paste.to/raw/raw/raw/14372a45d5d8fbb7",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://paste.to/raw/raw/raw/raw/raw/raw/raw/14372a45d5d8fbb7",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://www.85la.com/internet-access/free-network-nodes",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://nodebuf.com/s/bLpULbo0ZlK7mdV7dTjd4fD_",
+      "status": "ok",
+      "count": 231
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1XHdNXpu9QmPKVd0qI3fSS351O9CCzFul",
+      "status": "ok",
+      "count": 189
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/e04885b36955a61f22a13d0e0160ceb3/raw/d220286f09dd74712d6977295f47ab1492c3fa19/Clash261029.yaml",
+      "status": "ok",
+      "count": 68
+    },
+    {
+      "url": "https://gist.githubusercontent.com/meitan16/33a53d14ae7ba7d23b78f1eb7c0e048d/raw/b25904d6e959961c0a0d61594c539118b0fd0541/nodes.yaml",
+      "status": "ok",
+      "count": 127
+    },
+    {
+      "url": "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
+      "status": "ok",
+      "count": 494
+    },
+    {
+      "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
+      "status": "ok",
+      "count": 2135
+    },
+    {
+      "url": "https://raw.githubusercontent.com/peasoft/No_FDroid/master/subscribe/clash.yml",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub/config.yaml",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/special/normal.txt",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/freefq/free/master/v2ray.txt",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ssrsub/ssr/master/ssrsub",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/zhangkaiitugithub/passwall/master/mix_1.yaml",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online_Mini.ini",
+      "status": "empty",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/snakeme/cf-speedtest/master/Clash.yaml",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://raw.githubusercontent.com/Leon406/SubMain/main/sub.yaml",
+      "status": "error",
+      "count": 0
+    },
+    {
+      "url": "https://www.85la.com/",
+      "status": "error",
+      "count": 0
+    }
+  ]
 }
