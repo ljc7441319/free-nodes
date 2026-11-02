@@ -299,16 +299,19 @@ def collect_nodes_from_sources(urls):
 def write_subscription_files(nodes):
     os.makedirs("sub", exist_ok=True)
 
-    if not nodes:
-        empty_text = "# no valid proxies\n"
-        with open(os.path.join("sub", "clash.yml"), "w", encoding="utf-8") as fp:
-            fp.write(empty_text)
-        with open(os.path.join("sub", "free-nodes.txt"), "w", encoding="utf-8") as fp:
-            fp.write(empty_text)
-        return
+    safe_nodes = filter_china_nodes(nodes)[:MAX_PROXY_OUTPUT]
 
-    safe_nodes = filter_china_nodes(nodes)
-    safe_nodes = safe_nodes[:MAX_PROXY_OUTPUT]
+    if not safe_nodes:
+        empty_text = "# no valid proxies\n"
+        for relative_path in (
+            "sub/clash.yml",
+            "sub/clash.yaml",
+            "sub/free-nodes.txt",
+            "sub/v2ray.txt",
+        ):
+            with open(relative_path, "w", encoding="utf-8") as fp:
+                fp.write(empty_text)
+        return
 
     try:
         clash_text = yaml.safe_dump({"proxies": safe_nodes}, allow_unicode=True, sort_keys=False)
@@ -327,11 +330,15 @@ def write_subscription_files(nodes):
         else:
             plain_lines.append(str(node))
 
-    with open(os.path.join("sub", "clash.yml"), "w", encoding="utf-8") as fp:
-        fp.write(clash_text)
-
-    with open(os.path.join("sub", "free-nodes.txt"), "w", encoding="utf-8") as fp:
-        fp.write("\n".join(plain_lines))
+    plain_text = "\n".join(plain_lines)
+    for relative_path, content in (
+        ("sub/clash.yml", clash_text),
+        ("sub/clash.yaml", clash_text),
+        ("sub/free-nodes.txt", plain_text),
+        ("sub/v2ray.txt", plain_text),
+    ):
+        with open(relative_path, "w", encoding="utf-8") as fp:
+            fp.write(content)
 
 
 def save_stats(stats):
