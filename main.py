@@ -60,6 +60,8 @@ CHINA_NODE_PATTERNS = (
     "国内",
 )
 
+SUPPORTED_CLASH_TYPES = {"vmess", "vless", "trojan", "ss", "ssr"}
+
 
 def normalize_filter_text(value):
     if value is None:
@@ -296,12 +298,333 @@ def collect_nodes_from_sources(urls):
     return unique_nodes, stats
 
 
+def encode_base64(text):
+    return base64.b64encode(text.encode("utf-8")).decode("ascii")
+
+
+def safe_int(value, default=0):
+    try:
+        return int(value)
+    except Exception:
+        return default
+
+
+def build_vmess_payload(node):
+    if not isinstance(node, dict):
+        return None
+    server = node.get("server")
+    port = safe_int(node.get("port"), 0)
+    if not server or port <= 0:
+        return None
+    uuid = node.get("uuid") or node.get("id")
+    if not uuid:
+        return None
+
+    net = str(node.get("network") or "tcp").lower()
+    if net == "httpupgrade":
+        net = "ws"
+    if net == "xhttp":
+        net = "ws"
+
+    path = ""
+    if net == "ws":
+        ws_opts = node.get("ws-opts") or {}
+        if isinstance(ws_opts, dict):
+            path = ws_opts.get("path") or ""
+    elif net == "grpc":
+        grpc_opts = node.get("grpc-opts") or {}
+        if isinstance(grpc_opts, dict):
+            path = grpc_opts.get("serviceName") or ""
+    elif "http-opts" in node and isinstance(node.get("http-opts"), dict):
+        http_opts = node.get("http-opts") or {}
+        path = http_opts.get("path") or ""
+        if isinstance(path, list):
+            path = path[0] if path else ""
+
+    host = node.get("servername") or node.get("host") or ""
+    tls_flag = bool(node.get("tls"))
+    payload = {
+        "v": "2",
+        "ps": node.get("name") or "proxy",
+        "add": server,
+        "port": port,
+        "id": uuid,
+        "aid": safe_int(node.get("alterId"), 0),
+        "scy": node.get("cipher") or "auto",
+        "net": net,
+        "type": "none",
+        "host": host,
+        "path": path,
+        "tls": "tls" if tls_flag else "",
+        "sni": node.get("sni") or host or "",
+        "alpn": node.get("alpn") or "",
+    }
+    if net == "ws":
+        payload["type"] = "none"
+    return payload
+
+
+def vmess_to_url(node):
+    payload = build_vmess_payload(node)
+    if not payload:
+        return None
+    data = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
+    return "vmess://" + encode_base64(data)
+
+
+def vless_to_url(node):
+    if not isinstance(node, dict):
+        return None
+    server = node.get("server")
+    port = node.get("port")
+    uuid = node.get("uuid")
+    if not server or not port or not uuid:
+        return None
+
+    net = str(node.get("network") or "tcp").lower()
+    if net == "httpupgrade":
+        net = "ws"
+    if net == "xhttp":
+        net = "ws"
+
+    query = {
+        "encryption": "none",
+        "security": "tls" if node.get("tls") else "none",
+        "type": net if net in {"ws", "grpc", "http", "tcp"} else "tcp",
+    }
+    if node.get("sni"):
+        query["sni"] = str(node.get("sni"))
+    if node.get("servername"):
+        query["host"] = str(node.get("servername"))
+    elif node.get("host"):
+        query["host"] = str(node.get("host"))
+
+    if net == "ws":
+        ws_opts = node.get("ws-opts") or {}
+        if isinstance(ws_opts, dict):
+            path = ws_opts.get("path") or ""
+            if path:
+                query["path"] = path
+            headers = ws_opts.get("headers") or {}
+            if isinstance(headers, dict):
+                host = headers.get("Host") or headers.get("host")
+                if host:
+                    query["host"] = str(host)
+    elif net == "grpc":
+        grpc_opts = node.get("grpc-opts") or {}
+        if isinstance(grpc_opts, dict):
+            service_name = grpc_opts.get("grpc-service-name") or grpc_opts.get("serviceName")
+            if service_name:
+                query["serviceName"] = str(service_name)
+
+    if node.get("flow"):
+        query["flow"] = str(node.get("flow"))
+    if node.get("alpn"):
+        query["alpn"] = ",".join(str(i) for i in node.get("alpn"))
+    if node.get("skip-cert-verify") is True:
+        query["verify"] = "false"
+
+    host = query.get("host") or query.get("sni") or server
+    uri = f"vless://{uuid}@{server}:{port}?{urllib.parse.urlencode(query, doseq=True)}"
+    if node.get("name"):
+        return uri + f"#{urllib.parse.quote(str(node.get('name')), safe='')}"
+    return uri
+
+
+def trojan_to_url(node):
+    if not isinstance(node, dict):
+        return None
+    server = node.get("server")
+    port = node.get("port")
+    password = node.get("password")
+    if not server or not port or not password:
+        return None
+
+    query = {
+        "security": "tls" if node.get("tls") else "none",
+    }
+    if node.get("sni"):
+        query["sni"] = str(node.get("sni"))
+    if node.get("servername"):
+        query["host"] = str(node.get("servername"))
+    if node.get("skip-cert-verify") is True:
+        query["allowInsecure"] = "1"
+    if node.get("network"):
+        query["type"] = str(node.get("network"))
+    ws_opts = node.get("ws-opts") or {}
+    if isinstance(ws_opts, dict) and ws_opts.get("path"):
+        query["path"] = ws_opts.get("path")
+    uri = f"trojan://{urllib.parse.quote(password, safe='')}@{server}:{port}?{urllib.parse.urlencode(query, doseq=True)}"
+    if node.get("name"):
+        return uri + f"#{urllib.parse.quote(str(node.get('name')), safe='')}"
+    return uri
+
+
+def ss_to_url(node):
+    if not isinstance(node, dict):
+        return None
+    server = node.get("server")
+    port = node.get("port")
+    method = node.get("cipher") or node.get("method")
+    password = node.get("password")
+    if not server or not port or not method or not password:
+        return None
+
+    userinfo = urllib.parse.quote(f"{method}:{password}", safe='')
+    uri = f"ss://{userinfo}@{server}:{port}"
+    if node.get("name"):
+        return uri + f"#{urllib.parse.quote(str(node.get('name')), safe='')}"
+    return uri
+
+
+def standardize_node_to_url(node):
+    if isinstance(node, str):
+        text = node.strip()
+        if not text:
+            return None
+        if text.startswith(("vmess://", "vless://", "ss://", "trojan://")):
+            return text
+        if text.startswith("{"):
+            try:
+                node = json.loads(text)
+            except Exception:
+                return None
+        else:
+            return None
+
+    if not isinstance(node, dict):
+        return None
+
+    node_type = str(node.get("type") or "").lower()
+    if node_type == "vmess":
+        return vmess_to_url(node)
+    if node_type == "vless":
+        return vless_to_url(node)
+    if node_type == "trojan":
+        return trojan_to_url(node)
+    if node_type in {"ss", "shadowsocks"}:
+        return ss_to_url(node)
+
+    # some upstream data may store protocol in fields but type missing
+    if node.get("server") and node.get("port"):
+        if node.get("uuid"):
+            return vless_to_url(node)
+        if node.get("password") and node.get("cipher"):
+            return ss_to_url(node)
+        if node.get("password"):
+            return trojan_to_url(node)
+
+    return None
+
+
+def sanitize_clash_proxy(node):
+    if not isinstance(node, dict):
+        return None
+
+    node_type = str(node.get("type") or "").lower()
+    if node_type not in SUPPORTED_CLASH_TYPES:
+        return None
+
+    name = node.get("name") or f"proxy-{len(str(node))}"
+    proxy = {"name": str(name)}
+
+    if node_type in {"vless", "vmess", "trojan"}:
+        server = node.get("server")
+        port = node.get("port")
+        if not server or port is None:
+            return None
+        proxy["type"] = node_type
+        proxy["server"] = str(server)
+        proxy["port"] = int(port)
+        if node.get("tls") is not None:
+            proxy["tls"] = bool(node.get("tls"))
+        if node.get("skip-cert-verify") is not None:
+            proxy["skip-cert-verify"] = bool(node.get("skip-cert-verify"))
+        if node.get("udp") is not None:
+            proxy["udp"] = bool(node.get("udp"))
+        if node.get("sni"):
+            proxy["sni"] = str(node.get("sni"))
+        if node.get("servername"):
+            proxy["servername"] = str(node.get("servername"))
+        if node.get("network"):
+            proxy["network"] = str(node.get("network"))
+        if node.get("ws-opts"):
+            proxy["ws-opts"] = node.get("ws-opts")
+        if node.get("http-opts"):
+            proxy["http-opts"] = node.get("http-opts")
+        if node.get("grpc-opts"):
+            proxy["grpc-opts"] = node.get("grpc-opts")
+        if node.get("alpn"):
+            proxy["alpn"] = node.get("alpn")
+        if node.get("client-fingerprint"):
+            proxy["client-fingerprint"] = str(node.get("client-fingerprint"))
+        if node_type == "vless":
+            if node.get("uuid"):
+                proxy["uuid"] = str(node.get("uuid"))
+            if node.get("flow"):
+                proxy["flow"] = str(node.get("flow"))
+        elif node_type == "vmess":
+            if node.get("uuid"):
+                proxy["uuid"] = str(node.get("uuid"))
+            if node.get("alterId") is not None:
+                proxy["alterId"] = safe_int(node.get("alterId"), 0)
+            if node.get("cipher"):
+                proxy["cipher"] = str(node.get("cipher"))
+        elif node_type == "trojan":
+            if node.get("password"):
+                proxy["password"] = str(node.get("password"))
+    elif node_type in {"ss", "ssr"}:
+        server = node.get("server")
+        port = node.get("port")
+        if not server or port is None:
+            return None
+        proxy["type"] = "ss"
+        proxy["server"] = str(server)
+        proxy["port"] = int(port)
+        if node.get("cipher"):
+            proxy["cipher"] = str(node.get("cipher"))
+        if node.get("method"):
+            proxy["cipher"] = str(node.get("method"))
+        if node.get("password"):
+            proxy["password"] = str(node.get("password"))
+        if node.get("udp") is not None:
+            proxy["udp"] = bool(node.get("udp"))
+
+    if not proxy:
+        return None
+    return proxy
+
+
+def generate_clash_config(nodes):
+    proxies = []
+    for node in nodes:
+        sanitized = sanitize_clash_proxy(node)
+        if sanitized:
+            proxies.append(sanitized)
+
+    proxy_names = [p["name"] for p in proxies]
+    return {
+        "proxies": proxies,
+        "proxy-groups": [{
+            "name": "Auto",
+            "type": "select",
+            "proxies": proxy_names,
+        }],
+        "rules": ["MATCH,Auto"],
+    }
+
+
 def write_subscription_files(nodes):
     os.makedirs("sub", exist_ok=True)
 
-    safe_nodes = filter_china_nodes(nodes)[:MAX_PROXY_OUTPUT]
+    filtered_nodes = filter_china_nodes(nodes)[:MAX_PROXY_OUTPUT]
+    standard_links = []
+    for node in filtered_nodes:
+        link = standardize_node_to_url(node)
+        if link:
+            standard_links.append(link)
 
-    if not safe_nodes:
+    if not standard_links:
         empty_text = "# no valid proxies\n"
         for relative_path in (
             "sub/clash.yml",
@@ -313,24 +636,10 @@ def write_subscription_files(nodes):
                 fp.write(empty_text)
         return
 
-    try:
-        clash_text = yaml.safe_dump({"proxies": safe_nodes}, allow_unicode=True, sort_keys=False)
-    except Exception:
-        clash_text = json.dumps({"proxies": safe_nodes}, ensure_ascii=False, indent=2)
+    clash_config = generate_clash_config(filtered_nodes)
+    clash_text = yaml.safe_dump(clash_config, allow_unicode=True, sort_keys=False)
 
-    plain_lines = []
-    for node in safe_nodes:
-        if isinstance(node, str):
-            plain_lines.append(node)
-        elif isinstance(node, dict):
-            if "server" in node and "password" in node:
-                plain_lines.append(json.dumps(node, ensure_ascii=False, sort_keys=True))
-            else:
-                plain_lines.append(str(node))
-        else:
-            plain_lines.append(str(node))
-
-    plain_text = "\n".join(plain_lines)
+    plain_text = "\n".join(standard_links)
     for relative_path, content in (
         ("sub/clash.yml", clash_text),
         ("sub/clash.yaml", clash_text),
@@ -374,3 +683,8 @@ if __name__ == "__main__":
 # filter_china_nodes(...) or cleanse_and_filter_node_text(...) before final output.
 # This enforces removal of nodes tagged as China/CN/中国/🇨🇳 in name, address, region,
 # or any other node metadata before writing the subscription files.
+#
+# The output files are intentionally generated in standard subscription formats:
+# - Clash config: valid YAML with proxies, proxy-groups, and rules
+# - V2Ray-compatible text: one standard node URL per line
+# This avoids invalid Python dict serialization such as {'name': ...} in v2ray.txt.
