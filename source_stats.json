@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-02T06:25:07Z",
+  "updated_at": "2026-11-02T18:59:00Z",
   "total_sources": 44,
   "success_count": 25,
   "empty_count": 8,
@@ -169,7 +169,7 @@
     {
       "url": "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
       "status": "ok",
-      "count": 494
+      "count": 364
     },
     {
       "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
