@@ -22,6 +22,9 @@ STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "t
 MAX_PROXY_OUTPUT = int(os.environ.get("MAX_PROXY_OUTPUT", "3000"))
 MAX_LATENCY_MS = int(os.environ.get("MAX_LATENCY_MS", "99999"))
 MAX_THREAD_WORKERS = int(os.environ.get("MAX_THREAD_WORKERS", "30"))
+ENABLE_TCP_CHECK = os.environ.get("ENABLE_TCP_CHECK", "true").lower() == "true"
+TCP_CHECK_TIMEOUT = float(os.environ.get("TCP_CHECK_TIMEOUT", "1.5"))
+LIVENESS_CHECK_MAX_NODES = int(os.environ.get("LIVENESS_CHECK_MAX_NODES", "500"))
 
 DEFAULT_PASTE_TO_SOURCES = [
     "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
@@ -309,6 +312,154 @@ def safe_int(value, default=0):
         return default
 
 
+def normalize_server(server):
+    if server is None:
+        return ""
+    if isinstance(server, (list, tuple)):
+        server = server[0]
+    server = str(server).strip().strip("[]")
+    if not server:
+        return ""
+    return server
+
+
+def is_valid_server_host(server):
+    server = normalize_server(server)
+    if not server:
+        return False
+    if server.lower() in {"null", "none", "unknown", "example.com"}:
+        return False
+    if server.startswith("http://") or server.startswith("https://"):
+        return False
+    if re.search(r"\s", server):
+        return False
+    if ":" in server and not re.fullmatch(r"[A-Za-z0-9._:-]+", server):
+        return False
+    if not re.fullmatch(r"[A-Za-z0-9._:-]+", server):
+        return False
+    return True
+
+
+def normalize_node_type(node):
+    if not isinstance(node, dict):
+        return ""
+    node_type = str(node.get("type") or "").lower().strip()
+    if node_type:
+        return node_type
+    if node.get("uuid") and node.get("server"):
+        return "vless"
+    if node.get("password") and node.get("server") and node.get("cipher"):
+        return "ss"
+    if node.get("password") and node.get("server"):
+        return "trojan"
+    if node.get("server") and node.get("port"):
+        return "vless"
+    return ""
+
+
+def sanitize_candidate(node):
+    if not isinstance(node, dict):
+        return None
+
+    node_type = normalize_node_type(node)
+    if not node_type:
+        return None
+
+    server = normalize_server(node.get("server"))
+    if not is_valid_server_host(server):
+        return None
+
+    port = safe_int(node.get("port"), None)
+    if port is None or port < 1 or port > 65535:
+        return None
+
+    sanitized = dict(node)
+    sanitized["type"] = node_type
+    sanitized["server"] = server
+    sanitized["port"] = port
+
+    if node_type in {"vless", "vmess"}:
+        uuid = node.get("uuid") or node.get("id")
+        if not uuid or not str(uuid).strip():
+            return None
+        sanitized["uuid"] = str(uuid)
+        if node_type == "vmess":
+            sanitized["alterId"] = safe_int(node.get("alterId"), 0)
+            sanitized["cipher"] = str(node.get("cipher") or "auto")
+
+    if node_type == "trojan":
+        password = node.get("password")
+        if not password or not str(password).strip():
+            return None
+        sanitized["password"] = str(password)
+
+    if node_type in {"ss", "ssr"}:
+        method = node.get("cipher") or node.get("method")
+        password = node.get("password")
+        if not method or not password:
+            return None
+        sanitized["cipher"] = str(method)
+        sanitized["password"] = str(password)
+
+    # drop obviously broken entries that carry non-proxy payloads
+    if "name" in sanitized:
+        name = str(sanitized["name"]).strip()
+        if not name or name.lower() in {"none", "null", "unknown"}:
+            sanitized["name"] = f"{node_type}-{server}-{port}"
+
+    return sanitized
+
+
+def check_node_liveness(node, timeout=TCP_CHECK_TIMEOUT):
+    if not isinstance(node, dict):
+        return False
+    server = normalize_server(node.get("server"))
+    port = safe_int(node.get("port"), None)
+    if not server or port is None:
+        return False
+
+    try:
+        sock = socket.create_connection((server, port), timeout=timeout)
+        sock.close()
+        return True
+    except Exception:
+        return False
+
+
+def deduplicate_nodes(nodes):
+    seen = set()
+    out = []
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        key = json.dumps({
+            "type": normalize_node_type(node),
+            "server": normalize_server(node.get("server")),
+            "port": safe_int(node.get("port"), -1),
+            "name": str(node.get("name") or "").strip(),
+            "uuid": str(node.get("uuid") or node.get("id") or "").strip(),
+            "password": str(node.get("password") or "").strip(),
+        }, ensure_ascii=False, sort_keys=True)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(node)
+    return out
+
+
+def filter_usable_nodes(nodes, check_connectivity=ENABLE_TCP_CHECK):
+    valid = []
+    for node in nodes:
+        candidate = sanitize_candidate(node)
+        if not candidate:
+            continue
+        if check_connectivity and not check_node_liveness(candidate):
+            continue
+        valid.append(candidate)
+
+    return deduplicate_nodes(valid)
+
+
 def build_vmess_payload(node):
     if not isinstance(node, dict):
         return None
@@ -368,7 +519,7 @@ def vmess_to_url(node):
     payload = build_vmess_payload(node)
     if not payload:
         return None
-    data = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
+    data = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
     return "vmess://" + encode_base64(data)
 
 
@@ -495,17 +646,16 @@ def standardize_node_to_url(node):
     if not isinstance(node, dict):
         return None
 
-    node_type = str(node.get("type") or "").lower()
+    node_type = normalize_node_type(node)
     if node_type == "vmess":
         return vmess_to_url(node)
     if node_type == "vless":
         return vless_to_url(node)
     if node_type == "trojan":
         return trojan_to_url(node)
-    if node_type in {"ss", "shadowsocks"}:
+    if node_type in {"ss", "ssr"}:
         return ss_to_url(node)
 
-    # some upstream data may store protocol in fields but type missing
     if node.get("server") and node.get("port"):
         if node.get("uuid"):
             return vless_to_url(node)
@@ -521,7 +671,7 @@ def sanitize_clash_proxy(node):
     if not isinstance(node, dict):
         return None
 
-    node_type = str(node.get("type") or "").lower()
+    node_type = normalize_node_type(node)
     if node_type not in SUPPORTED_CLASH_TYPES:
         return None
 
@@ -617,9 +767,11 @@ def generate_clash_config(nodes):
 def write_subscription_files(nodes):
     os.makedirs("sub", exist_ok=True)
 
-    filtered_nodes = filter_china_nodes(nodes)[:MAX_PROXY_OUTPUT]
+    usable_nodes = filter_usable_nodes(nodes, check_connectivity=ENABLE_TCP_CHECK)
+    safe_nodes = usable_nodes[:MAX_PROXY_OUTPUT]
+
     standard_links = []
-    for node in filtered_nodes:
+    for node in safe_nodes:
         link = standardize_node_to_url(node)
         if link:
             standard_links.append(link)
@@ -636,7 +788,7 @@ def write_subscription_files(nodes):
                 fp.write(empty_text)
         return
 
-    clash_config = generate_clash_config(filtered_nodes)
+    clash_config = generate_clash_config(safe_nodes)
     clash_text = yaml.safe_dump(clash_config, allow_unicode=True, sort_keys=False)
 
     plain_text = "\n".join(standard_links)
@@ -670,8 +822,9 @@ def main():
     if os.path.exists(SOURCE_LIST_FILE):
         print(f"123.txt sample: {read_urls_from_file()[:3]}")
     nodes, stats = collect_nodes_from_sources(urls)
-    print(f"Collected {len(nodes)} valid nodes from {len(stats)} source checks")
-    write_subscription_files(nodes)
+    filtered_nodes = filter_usable_nodes(nodes, check_connectivity=ENABLE_TCP_CHECK)
+    print(f"Collected {len(nodes)} raw nodes, kept {len(filtered_nodes)} usable nodes from {len(stats)} source checks")
+    write_subscription_files(filtered_nodes)
     save_stats(stats)
 
 
@@ -683,8 +836,5 @@ if __name__ == "__main__":
 # filter_china_nodes(...) or cleanse_and_filter_node_text(...) before final output.
 # This enforces removal of nodes tagged as China/CN/中国/🇨🇳 in name, address, region,
 # or any other node metadata before writing the subscription files.
-#
-# The output files are intentionally generated in standard subscription formats:
-# - Clash config: valid YAML with proxies, proxy-groups, and rules
-# - V2Ray-compatible text: one standard node URL per line
-# This avoids invalid Python dict serialization such as {'name': ...} in v2ray.txt.
+# The generator now filters unusable entries by protocol validity and, when enabled,
+# a short TCP reachability check; this preserves only nodes likely to work in clients.
