@@ -15,6 +15,7 @@ except Exception:
     sync_playwright = None
 
 STATS_FILE = "source_stats.json"
+SOURCE_LIST_FILE = "123.txt"
 MAX_FAIL_COUNT = 3
 
 STRICT_FILTER_MODE = os.environ.get("STRICT_FILTER_MODE", "false").lower() == "true"
@@ -194,6 +195,167 @@ def cleanse_and_filter_node_text(raw_text):
         return yaml.safe_dump({"proxies": filtered_nodes}, allow_unicode=True, sort_keys=False)
     except Exception:
         return json.dumps({"proxies": filtered_nodes}, ensure_ascii=False, indent=2)
+
+
+def read_urls_from_file(file_path=SOURCE_LIST_FILE):
+    urls = []
+    if not os.path.exists(file_path):
+        return urls
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as fp:
+            for line in fp:
+                candidate = line.strip()
+                if not candidate or candidate.startswith("#"):
+                    continue
+                if candidate.startswith("http://") or candidate.startswith("https://"):
+                    urls.append(candidate)
+    except Exception:
+        return []
+
+    return urls
+
+
+def deduplicate_urls(urls):
+    seen = set()
+    ordered = []
+    for url in urls:
+        norm = urllib.parse.urlsplit(url).geturl().strip()
+        if not norm:
+            continue
+        key = norm.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        ordered.append(norm)
+    return ordered
+
+
+def fetch_url_content(url, timeout=25):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "Accept": "*/*",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    }
+
+    response = requests.get(url, headers=headers, timeout=timeout, allow_redirects=True)
+    response.raise_for_status()
+    return response.text
+
+
+def gather_sources():
+    urls = []
+    urls.extend(read_urls_from_file())
+    urls.extend(DEFAULT_PASTE_TO_SOURCES)
+    urls = deduplicate_urls(urls)
+    return urls
+
+
+def collect_nodes_from_sources(urls):
+    nodes = []
+    stats = []
+
+    def worker(url):
+        try:
+            text = fetch_url_content(url)
+            parsed = parse_node_list(text)
+            if not parsed:
+                return {"url": url, "status": "empty", "count": 0}
+
+            filtered = filter_china_nodes(parsed)
+            if not filtered:
+                return {"url": url, "status": "filtered", "count": 0}
+            return {"url": url, "status": "ok", "count": len(filtered), "nodes": filtered}
+        except Exception:
+            return {"url": url, "status": "error", "count": 0}
+
+    max_workers = min(MAX_THREAD_WORKERS, max(1, len(urls)))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
+        for result in pool.map(worker, urls):
+            stats.append({
+                "url": result["url"],
+                "status": result["status"],
+                "count": result["count"],
+            })
+            if result.get("nodes"):
+                nodes.extend(result["nodes"])
+
+    seen = set()
+    unique_nodes = []
+    for node in nodes:
+        try:
+            signature = json.dumps(node, ensure_ascii=False, sort_keys=True)
+        except Exception:
+            signature = str(node)
+        if signature in seen:
+            continue
+        seen.add(signature)
+        unique_nodes.append(node)
+
+    return unique_nodes, stats
+
+
+def write_subscription_files(nodes):
+    os.makedirs("sub", exist_ok=True)
+
+    if not nodes:
+        empty_text = "# no valid proxies\n"
+        with open(os.path.join("sub", "clash.yml"), "w", encoding="utf-8") as fp:
+            fp.write(empty_text)
+        with open(os.path.join("sub", "free-nodes.txt"), "w", encoding="utf-8") as fp:
+            fp.write(empty_text)
+        return
+
+    safe_nodes = filter_china_nodes(nodes)
+    safe_nodes = safe_nodes[:MAX_PROXY_OUTPUT]
+
+    try:
+        clash_text = yaml.safe_dump({"proxies": safe_nodes}, allow_unicode=True, sort_keys=False)
+    except Exception:
+        clash_text = json.dumps({"proxies": safe_nodes}, ensure_ascii=False, indent=2)
+
+    plain_lines = []
+    for node in safe_nodes:
+        if isinstance(node, str):
+            plain_lines.append(node)
+        elif isinstance(node, dict):
+            if "server" in node and "password" in node:
+                plain_lines.append(json.dumps(node, ensure_ascii=False, sort_keys=True))
+            else:
+                plain_lines.append(str(node))
+        else:
+            plain_lines.append(str(node))
+
+    with open(os.path.join("sub", "clash.yml"), "w", encoding="utf-8") as fp:
+        fp.write(clash_text)
+
+    with open(os.path.join("sub", "free-nodes.txt"), "w", encoding="utf-8") as fp:
+        fp.write("\n".join(plain_lines))
+
+
+def save_stats(stats):
+    payload = {
+        "updated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "total_sources": len(stats),
+        "success_count": sum(1 for item in stats if item.get("status") == "ok"),
+        "empty_count": sum(1 for item in stats if item.get("status") == "empty"),
+        "error_count": sum(1 for item in stats if item.get("status") == "error"),
+        "filtered_count": sum(1 for item in stats if item.get("status") == "filtered"),
+        "items": stats,
+    }
+    with open(STATS_FILE, "w", encoding="utf-8") as fp:
+        json.dump(payload, fp, ensure_ascii=False, indent=2)
+
+
+def main():
+    urls = gather_sources()
+    nodes, stats = collect_nodes_from_sources(urls)
+    write_subscription_files(nodes)
+    save_stats(stats)
+
+
+if __name__ == "__main__":
+    main()
 
 
 # IMPORTANT: when a source node list is parsed downstream, it should pass through
