@@ -248,6 +248,7 @@ def gather_sources():
     urls.extend(read_urls_from_file())
     urls.extend(DEFAULT_PASTE_TO_SOURCES)
     urls = deduplicate_urls(urls)
+    print(f"Loaded {len(urls)} sources from 123.txt + defaults")
     return urls
 
 
@@ -349,7 +350,11 @@ def save_stats(stats):
 
 def main():
     urls = gather_sources()
+    print(f"123.txt exists: {os.path.exists(SOURCE_LIST_FILE)}")
+    if os.path.exists(SOURCE_LIST_FILE):
+        print(f"123.txt sample: {read_urls_from_file()[:3]}")
     nodes, stats = collect_nodes_from_sources(urls)
+    print(f"Collected {len(nodes)} valid nodes from {len(stats)} source checks")
     write_subscription_files(nodes)
     save_stats(stats)
 
