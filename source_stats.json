@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-11-03T03:00:01Z",
-  "total_sources": 44,
-  "success_count": 25,
+  "updated_at": "2026-11-03T12:43:23Z",
+  "total_sources": 47,
+  "success_count": 28,
   "empty_count": 8,
   "error_count": 11,
   "filtered_count": 0,
@@ -160,6 +160,21 @@
       "url": "https://drive.google.com/uc?export=download&id=1vg6Mwcpy4mfuahvwyEaU4gh7z3EvlSwT",
       "status": "ok",
       "count": 194
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/99a9873ad5753fbcec4bbe9d9e7d2c8f/raw/52e02fa7394c82fdb313ec5e0d7c4b5584c55983/1103.yaml",
+      "status": "ok",
+      "count": 56
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=17HeXiJrk7RuXA7RN0Ij37D192MetH37h",
+      "status": "ok",
+      "count": 198
+    },
+    {
+      "url": "https://gist.githubusercontent.com/meitan16/81a7aa722a692e3a9ef0c68090ab5478/raw/95fde1c1e3c7c3d03701062d4061e9bad049e60a/nodes.yaml",
+      "status": "ok",
+      "count": 170
     },
     {
       "url": "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
