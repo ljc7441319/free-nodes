@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-07T21:04:34Z",
+  "updated_at": "2026-11-08T06:31:42Z",
   "total_sources": 50,
   "success_count": 31,
-  "empty_count": 8,
-  "error_count": 11,
+  "empty_count": 10,
+  "error_count": 9,
   "filtered_count": 0,
   "items": [
     {
@@ -128,7 +128,7 @@
     },
     {
       "url": "https://www.85la.com/internet-access/free-network-nodes",
-      "status": "error",
+      "status": "empty",
       "count": 0
     },
     {
@@ -199,7 +199,7 @@
     {
       "url": "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
       "status": "ok",
-      "count": 354
+      "count": 459
     },
     {
       "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
@@ -253,7 +253,7 @@
     },
     {
       "url": "https://www.85la.com/",
-      "status": "error",
+      "status": "empty",
       "count": 0
     }
   ]
