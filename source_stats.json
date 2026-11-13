@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-11-13T01:57:48Z",
-  "total_sources": 50,
-  "success_count": 31,
+  "updated_at": "2026-11-13T22:53:18Z",
+  "total_sources": 53,
+  "success_count": 34,
   "empty_count": 10,
   "error_count": 9,
   "filtered_count": 0,
@@ -192,6 +192,21 @@
       "count": 69
     },
     {
+      "url": "https://gist.githubusercontent.com/meitan16/4e3f5e9cb8a14eac85fdb508db4b59c2/raw/0abe57aa6546829e91c7c09657e3955bf262bec8/nodes.yaml",
+      "status": "ok",
+      "count": 102
+    },
+    {
+      "url": "https://gist.githubusercontent.com/guidongone/ecc25932390e583793b1e42f30d2b69e/raw/3f3717f9f4a7d5e2a20a19739d0d167fc6409640/1113.yaml",
+      "status": "ok",
+      "count": 36
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1pMzz3qMdC7t8U63zFmzveCoPQzYt5zPj",
+      "status": "ok",
+      "count": 198
+    },
+    {
       "url": "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
       "status": "empty",
       "count": 0
@@ -199,12 +214,12 @@
     {
       "url": "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
       "status": "ok",
-      "count": 452
+      "count": 436
     },
     {
       "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
       "status": "ok",
-      "count": 2019
+      "count": 1729
     },
     {
       "url": "https://raw.githubusercontent.com/peasoft/No_FDroid/master/subscribe/clash.yml",
