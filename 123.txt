@@ -35,3 +35,5 @@ https://gist.githubusercontent.com/meitan16/81a7aa722a692e3a9ef0c68090ab5478/raw
 https://gist.githubusercontent.com/guidongone/84415c6df3a1fd020a8a4da6c4f87a29/raw/0ed8a3dcfef8b54484b3c93e33675410b85e7a36/1107.yaml
 https://drive.google.com/uc?export=download&id=1bms6c5J8L920cNBS4LgB_H5PlejPnnH7
 https://shz.al/Ba2p
+https://gist.githubusercontent.com/meitan16/4e3f5e9cb8a14eac85fdb508db4b59c2/raw/0abe57aa6546829e91c7c09657e3955bf262bec8/nodes.yaml
+https://gist.githubusercontent.com/guidongone/ecc25932390e583793b1e42f30d2b69e/raw/3f3717f9f4a7d5e2a20a19739d0d167fc6409640/1113.yaml
