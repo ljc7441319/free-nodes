@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-13T22:53:18Z",
+  "updated_at": "2026-11-14T06:54:20Z",
   "total_sources": 53,
-  "success_count": 34,
+  "success_count": 33,
   "empty_count": 10,
-  "error_count": 9,
+  "error_count": 10,
   "filtered_count": 0,
   "items": [
     {
@@ -188,8 +188,8 @@
     },
     {
       "url": "https://shz.al/Ba2p",
-      "status": "ok",
-      "count": 69
+      "status": "error",
+      "count": 0
     },
     {
       "url": "https://gist.githubusercontent.com/meitan16/4e3f5e9cb8a14eac85fdb508db4b59c2/raw/0abe57aa6546829e91c7c09657e3955bf262bec8/nodes.yaml",
@@ -214,7 +214,7 @@
     {
       "url": "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
       "status": "ok",
-      "count": 436
+      "count": 460
     },
     {
       "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
