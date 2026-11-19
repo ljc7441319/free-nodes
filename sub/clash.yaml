@@ -883,6 +883,17 @@ proxies:
   - http/1.1
   client-fingerprint: chrome
   uuid: dadb0935-c238-4171-aa65-b8a54fc492b5
+- name: 白俄(独立思维)
+  type: vless
+  server: 46.243.183.2
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: stream.indigo.ru
+  client-fingerprint: chrome
+  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
+  flow: xtls-rprx-vision
 - name: 美国(独立思维)_49
   type: vless
   server: 188.114.98.0
@@ -2081,6 +2092,17 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯  YouTube@小青科学网
+  type: vless
+  server: 46.243.183.2
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: stream.indigo.ru
+  client-fingerprint: chrome
+  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
+  flow: xtls-rprx-vision
 - name: 美国  YouTube@小青科学网_29
   type: vless
   server: 162.159.135.234
@@ -3658,6 +3680,15 @@ proxies:
   servername: 34hkd98u.x9v2m4q7n1p5r8t3w6z0b4k8.online
   network: httpupgrade
   uuid: dadb0935-c238-4171-aa65-b8a54fc492b5
+- name: YouTube顺丰资源 瑞士_15
+  type: vless
+  server: 138.124.125.193
+  port: 10444
+  tls: false
+  skip-cert-verify: false
+  servername: ads.x5.ru
+  network: tcp
+  uuid: e57ce64d-5a1a-4a90-96df-9e1bd3ad26e4
 - name: YouTube顺丰资源 巴西_16
   type: vless
   server: 152.233.71.81
@@ -4253,20 +4284,6 @@ proxies:
     headers:
       host: 4-M13.AYUtTHAya.KdNS.fr
   uuid: 1aa96574-c28b-4ee9-855d-ebdbbf1f7e90
-- name: YouTube顺丰资源 美国_118
-  type: vmess
-  server: 64.188.97.153
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  network: ws
-  ws-opts:
-    path: /api/v1/gpu-stream/socket
-    headers:
-      host: renderer-stream-2-62.mirra.now
-  uuid: db50a20e-7ff5-4e70-948f-17cc9ca7c154
-  alterId: 0
-  cipher: auto
 - name: YouTube顺丰资源 美国_119
   type: trojan
   server: 104.18.8.83
@@ -4375,6 +4392,15 @@ proxies:
   uuid: db50a20e-7ff5-4e70-948f-17cc9ca7c154
   alterId: 0
   cipher: auto
+- name: YouTube顺丰资源 巴西_135
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
 - name: YouTube顺丰资源 美国_136
   type: vless
   server: 208.103.161.249
@@ -4472,6 +4498,24 @@ proxies:
       host: 104.17.74.206
   uuid: 542fd687-5160-4f80-9223-56678567dd29
 - name: YouTube顺丰资源 巴西_153
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
+- name: YouTube顺丰资源 巴西_154
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
+- name: YouTube顺丰资源 巴西_155
   type: vless
   server: 200.165.229.159
   port: 443
@@ -5542,21 +5586,6 @@ proxies:
   - http/1.1
   client-fingerprint: chrome
   uuid: e6df2095-a73c-4043-8693-8d5a03686870
-- name: 美国(yudou99.com 玉豆分享)_15
-  type: vless
-  server: 38.55.199.128
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_18
   type: vless
   server: 43.174.195.1
@@ -6453,17 +6482,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 美国(yudou99.com 玉豆分享)_76
-  type: vless
-  server: 152.232.57.10
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: api.videobereg.cc
-  client-fingerprint: chrome
-  uuid: 082f5694-9019-4110-b67b-8125dbb9bab8
-  flow: xtls-rprx-vision
 - name: 美国(yudou99.com 玉豆分享)_77
   type: vless
   server: 172.64.150.43
@@ -6478,17 +6496,6 @@ proxies:
     headers:
       Host: snip.edgeoneai.cc.cd
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 美国(yudou99.com 玉豆分享)_78
-  type: vless
-  server: api.videobereg.cc
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: api.videobereg.cc
-  client-fingerprint: qq
-  uuid: 082f5694-9019-4110-b67b-8125dbb9bab8
-  flow: xtls-rprx-vision
 - name: 美国(yudou99.com 玉豆分享)_80
   type: vless
   server: 80.93.202.40
@@ -6693,6 +6700,21 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯(yudou99.com 玉豆分享)_3
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_96
   type: vless
   server: 31.220.89.170
@@ -6723,17 +6745,6 @@ proxies:
       Host: 20664.pages.dev
   client-fingerprint: random
   uuid: 9784bb19-3833-43ad-83b0-27ef8fc04ef2
-- name: 英国(yudou99.com 玉豆分享)_2
-  type: vless
-  server: 31.76.227.60
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: assets-mi-29.spbstudentlife.com
-  client-fingerprint: randomized
-  uuid: 05c8eabe-96af-4db2-bb2f-a24fa84344ba
-  flow: xtls-rprx-vision
 - name: 俄罗斯(yudou99.com 玉豆分享)_4
   type: vless
   server: api.mediapolyana.cc
@@ -6797,17 +6808,6 @@ proxies:
     headers:
       Host: www.calmlunch.com
   password: humanity
-- name: 美国(yudou99.com 玉豆分享)_104
-  type: vless
-  server: api.mediakaskad.cc
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: api.mediakaskad.cc
-  client-fingerprint: firefox
-  uuid: 082f5694-9019-4110-b67b-8125dbb9bab8
-  flow: xtls-rprx-vision
 - name: 美国(yudou99.com 玉豆分享)_105
   type: trojan
   server: 104.18.32.47
@@ -6905,15 +6905,6 @@ proxies:
   udp: true
   sni: www.calmlunch.com
   password: humanity
-- name: YouTube顺丰资源 美国_29
-  type: vless
-  server: app-sh-185.spbstudentlife.com
-  port: 443
-  tls: false
-  skip-cert-verify: false
-  servername: assets-sh-185.spbstudentlife.com
-  network: tcp
-  uuid: 074690f9-cb30-44f5-84e5-f3ce8fc6cf29
 - name: YouTube顺丰资源 法国_35
   type: vless
   server: studio.10media.top
@@ -7123,6 +7114,15 @@ proxies:
   uuid: db50a20e-7ff5-4e70-948f-17cc9ca7c154
   alterId: 0
   cipher: auto
+- name: YouTube顺丰资源 巴西_64
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
 - name: YouTube顺丰资源 美国_65
   type: vless
   server: 208.103.161.249
@@ -7221,7 +7221,25 @@ proxies:
     headers:
       host: 104.17.74.206
   uuid: 542fd687-5160-4f80-9223-56678567dd29
+- name: YouTube顺丰资源 巴西_82
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
 - name: YouTube顺丰资源 巴西_83
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
+- name: YouTube顺丰资源 巴西_84
   type: vless
   server: 200.165.229.159
   port: 443
@@ -7758,17 +7776,6 @@ proxies:
     headers:
       host: 172.67.217.240
   uuid: 4e4f1f70-5e56-4a76-bb9d-db087f4690c4
-- name: 德国  YouTube@小青科学网_1
-  type: vless
-  server: 78.17.178.125
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: cdn.tbank.ru
-  client-fingerprint: chrome
-  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
-  flow: xtls-rprx-vision
 - name: 美国  YouTube@小青科学网_5
   type: vless
   server: 162.159.135.234
@@ -7987,6 +7994,21 @@ proxies:
     path: /fdip=sstp://vpn:vpn@vpn748359672.opengw.net:1458?ed=2560fp=chrome
     headers:
       Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯  YouTube@小青科学网
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 未知  YouTube@小青科学网_4
   type: vless
@@ -8900,21 +8922,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 德国  YouTube@小青科学网_10
-  type: vless
-  server: 103.13.211.236
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 丹麦  YouTube@小青科学网
   type: vless
   server: 193.180.208.167
@@ -9383,20 +9390,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 美国  YouTube@小青科学网_64
-  type: vless
-  server: 179.255.107.60
-  port: 8443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国  YouTube@小青科学网_65
   type: vless
   server: 179.255.99.95
@@ -9757,6 +9750,21 @@ proxies:
     path: /
     headers:
       Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯  YouTube@小青科学网_2
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 未知  YouTube@小青科学网_40
   type: vless
@@ -10174,21 +10182,6 @@ proxies:
   network: ws
   ws-opts:
     path: /?TELEGRAM-TOOTFFARANGIfp=chrome
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 未知  YouTube@小青科学网_54
-  type: vless
-  server: 179.255.107.60
-  port: 8443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
     headers:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
@@ -10700,6 +10693,21 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 日本_xiaozhou168.top_9
+  type: vless
+  server: 161.248.62.26
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 日本_xiaozhou168.top_10
   type: vless
   server: 60.130.209.253
@@ -11054,21 +11062,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 德国_xiaozhou168.top_40
-  type: vless
-  server: 103.13.211.236
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 保加利亚_xiaozhou168.top_42
   type: vless
   server: 13.140.29.253
@@ -11139,6 +11132,21 @@ proxies:
     headers:
       Host: vms.lifetime42.workers.dev
   uuid: 6202b230-417c-4d8e-b624-0f71afa9c75d
+- name: 俄罗斯_xiaozhou168.top_49
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 捷克_xiaozhou168.top_50
   type: vless
   server: 95.182.95.237
@@ -11593,6 +11601,35 @@ proxies:
       - pl-a50baf0d7f.shamanapp.online
   client-fingerprint: chrome
   uuid: b3a11068-1a7e-4643-85de-7c82cce46943
+- name: 比利时_xiaozhou168.top_108
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 比利时_xiaozhou168.top_109
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fp=chrome
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 塞浦路斯_xiaozhou168.top_111
   type: vless
   server: 194.55.164.118
@@ -12171,6 +12208,21 @@ proxies:
     path: /fdip=sstp://vpn:vpn@vpn748359672.opengw.net:1458?ed=2560fp=chrome
     headers:
       Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯_xiaozhou168.top_183
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 未知_xiaozhou168.top_184
   type: vless
@@ -13185,21 +13237,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 德国_xiaozhou168.top_285
-  type: vless
-  server: 103.13.211.236
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 丹麦_xiaozhou168.top_286
   type: vless
   server: 193.180.208.167
@@ -13668,20 +13705,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 美国_xiaozhou168.top_335
-  type: vless
-  server: 179.255.107.60
-  port: 8443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国_xiaozhou168.top_336
   type: vless
   server: 179.255.99.95
@@ -14042,6 +14065,21 @@ proxies:
     path: /
     headers:
       Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯_xiaozhou168.top_383
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 未知_xiaozhou168.top_384
   type: vless
@@ -14459,21 +14497,6 @@ proxies:
   network: ws
   ws-opts:
     path: /?TELEGRAM-TOOTFFARANGIfp=chrome
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 美国_xiaozhou168.top_436
-  type: vless
-  server: 179.255.107.60
-  port: 8443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
     headers:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
@@ -15000,6 +15023,21 @@ proxies:
     path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443?ed=2560fp=chrome
     headers:
       Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 日本(独立思维)_5
+  type: vless
+  server: 161.248.62.26
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(独立思维)_11
   type: vless
@@ -15566,24 +15604,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 德国(独立思维)_8
-  type: vless
-  server: 103.13.211.236
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  alpn:
-  - h3
-  - h2
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(独立思维)_35
   type: vless
   server: 13.140.29.253
@@ -15703,10 +15723,40 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯(独立思维)
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(独立思维)_42
   type: vless
   server: 95.182.95.237
   port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯(独立思维)_1
+  type: vless
+  server: 139.100.226.187
+  port: 8443
   tls: true
   skip-cert-verify: true
   udp: true
@@ -16615,6 +16665,35 @@ proxies:
   - http/1.1
   client-fingerprint: chrome
   uuid: b3a11068-1a7e-4643-85de-7c82cce46943
+- name: 美国(独立思维)_103
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 比利时(独立思维)
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fp=chrome
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(独立思维)_104
   type: vless
   server: 194.55.164.118
@@ -16927,6 +17006,21 @@ proxies:
     headers:
       Host: snip.edgeoneai.cc.cd
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 日本(yudou99.com 玉豆分享)_5
+  type: vless
+  server: 161.248.62.26
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_11
   type: vless
   server: 60.130.209.253
@@ -17152,6 +17246,20 @@ proxies:
     headers:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 韩国(yudou99.com 玉豆分享)_1
+  type: vless
+  server: 123.111.169.70
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fp=chrome
+    headers:
+      Host: snip.edgeoneai.cc.cd
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_18
   type: vless
@@ -17497,24 +17605,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 德国(yudou99.com 玉豆分享)_8
-  type: vless
-  server: 103.13.211.236
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: snip.edgeoneai.cc.cd
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: snip.edgeoneai.cc.cd
-  alpn:
-  - h3
-  - h2
-  client-fingerprint: chrome
-  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_35
   type: vless
   server: 13.140.29.253
@@ -17634,10 +17724,40 @@ proxies:
     headers:
       Host: vms.lifetime42.workers.dev
   uuid: 6202b230-417c-4d8e-b624-0f71afa9c75d
+- name: 俄罗斯(yudou99.com 玉豆分享)
+  type: vless
+  server: 139.100.226.187
+  port: 8443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fdip=sstp://vpn:vpn@public-vpn-200.opengw.net:443
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_42
   type: vless
   server: 95.182.95.237
   port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 俄罗斯(yudou99.com 玉豆分享)_1
+  type: vless
+  server: 139.100.226.187
+  port: 8443
   tls: true
   skip-cert-verify: true
   udp: true
@@ -18579,6 +18699,35 @@ proxies:
   - http/1.1
   client-fingerprint: chrome
   uuid: b3a11068-1a7e-4643-85de-7c82cce46943
+- name: 美国(yudou99.com 玉豆分享)_103
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
+- name: 比利时(yudou99.com 玉豆分享)
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /fp=chrome
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 美国(yudou99.com 玉豆分享)_104
   type: vless
   server: 194.55.164.118
@@ -19897,17 +20046,6 @@ proxies:
   cipher: aes-256-gcm
   password: ZRpgaBeGxtENIXgvhpkZBKz9GnWRS2dYcx9O+a2iwN4=
   udp: true
-- name: 美国  YouTube@小青科学网_31
-  type: vless
-  server: app-sh-185.spbstudentlife.com
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: assets-sh-185.spbstudentlife.com
-  client-fingerprint: randomized
-  uuid: 074690f9-cb30-44f5-84e5-f3ce8fc6cf29
-  flow: xtls-rprx-vision
 - name: 未知  YouTube@小青科学网_24
   type: vless
   server: ang-el.ir
@@ -20532,6 +20670,21 @@ proxies:
     headers:
       Host: vms.lifetime17.workers.dev
   uuid: 6202b230-417c-4d8e-b624-0f71afa9c75d
+- name: 美国  YouTube@小青科学网_8
+  type: vless
+  server: 141.98.233.6
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: snip.edgeoneai.cc.cd
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: snip.edgeoneai.cc.cd
+  client-fingerprint: chrome
+  uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
 - name: 新加坡  YouTube@小青科学网_11
   type: vless
   server: 158.178.230.113
@@ -20884,17 +21037,6 @@ proxies:
       Host: snip.edgeoneai.cc.cd
   client-fingerprint: chrome
   uuid: 495c7195-85b8-498a-bf20-2ea9ce9175b5
-- name: 未知  YouTube@小青科学网_40
-  type: vless
-  server: app-sh-185.spbstudentlife.com
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: assets-sh-185.spbstudentlife.com
-  client-fingerprint: chrome
-  uuid: 074690f9-cb30-44f5-84e5-f3ce8fc6cf29
-  flow: xtls-rprx-vision
 - name: 韩国  YouTube@小青科学网_1
   type: vless
   server: 123.111.169.70
@@ -21310,6 +21452,15 @@ proxies:
   udp: true
   sni: www.pleadcourt.org
   password: humanity
+- name: YouTube顺丰资源 俄罗斯_94
+  type: vless
+  server: 5.129.222.115
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: ad7.vkusnews.com
+  network: tcp
+  uuid: 30572b57-f5ab-4eb8-82d4-a24d399b99f6
 - name: YouTube顺丰资源 Nofound_98
   type: trojan
   server: 162.159.244.91
@@ -21318,6 +21469,15 @@ proxies:
   udp: true
   sni: www.calmlunch.com
   password: humanity
+- name: YouTube顺丰资源 俄罗斯_99
+  type: vless
+  server: 45.144.221.169
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: arizona.eosapp.net
+  network: tcp
+  uuid: 30572b57-f5ab-4eb8-82d4-a24d399b99f6
 - name: YouTube顺丰资源 美国_101
   type: vless
   server: 104.21.16.18
@@ -22597,6 +22757,17 @@ proxies:
     headers:
       Host: www.calmlunch.com
   password: humanity
+- name: 美国(yudou99.com 玉豆分享)_42
+  type: vless
+  server: 45.144.221.169
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: arizona.eosapp.net
+  client-fingerprint: chrome
+  uuid: 30572b57-f5ab-4eb8-82d4-a24d399b99f6
+  flow: xtls-rprx-vision
 - name: 美国(yudou99.com 玉豆分享)_43
   type: vless
   server: 104.24.156.153
@@ -23140,28 +23311,6 @@ proxies:
   client-fingerprint: chrome
   uuid: 7965351e-758d-4b0c-a805-657ea60be54e
   flow: xtls-rprx-vision
-- name: 德国(独立思维)_5
-  type: vless
-  server: 78.17.178.125
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: cdn.tbank.ru
-  client-fingerprint: chrome
-  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
-  flow: xtls-rprx-vision
-- name: 德国(独立思维)_6
-  type: vless
-  server: 78.17.178.125
-  port: 443
-  tls: true
-  skip-cert-verify: true
-  udp: true
-  servername: cdn.tbank.ru
-  client-fingerprint: chrome
-  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
-  flow: xtls-rprx-vision
 - name: 德国(独立思维)_7
   type: vless
   server: 78.17.178.125
@@ -23238,6 +23387,17 @@ proxies:
     headers:
       Host: www.calmlunch.com
   password: humanity
+- name: 美国(独立思维)_42
+  type: vless
+  server: 45.144.221.169
+  port: 443
+  tls: true
+  skip-cert-verify: true
+  udp: true
+  servername: arizona.eosapp.net
+  client-fingerprint: chrome
+  uuid: 30572b57-f5ab-4eb8-82d4-a24d399b99f6
+  flow: xtls-rprx-vision
 - name: 美国(独立思维)_43
   type: vless
   server: 104.24.156.153
@@ -24970,13 +25130,6 @@ proxies:
   cipher: aes-256-gcm
   password: ZRpgaBeGxtENIXgvhpkZBKz9GnWRS2dYcx9O+a2iwN4=
   udp: true
-- name: xiaozhou168.top_208
-  type: ss
-  server: 202.50.253.54
-  port: 19999
-  cipher: aes-256-gcm
-  password: ZRpgaBeGxtENIXgvhpkZBKz9GnWRS2dYcx9O+a2iwN4=
-  udp: true
 - name: xiaozhou168.top_209
   type: ss
   server: 202.50.253.90
@@ -25133,6 +25286,17 @@ proxies:
   sni: www.calmlunch.com
   servername: www.calmlunch.com
   password: humanity
+- name: xiaozhou168.top_231
+  type: vless
+  server: 45.144.221.169
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  udp: true
+  sni: arizona.eosapp.net
+  servername: arizona.eosapp.net
+  uuid: 30572b57-f5ab-4eb8-82d4-a24d399b99f6
+  flow: xtls-rprx-vision
 - name: xiaozhou168.top_232
   type: vless
   server: 104.24.156.153
@@ -25324,24 +25488,6 @@ proxies:
   servername: nl-central.v8x2b.lol
   network: tcp
   uuid: 846cedee-2a52-0002-a0b9-11850ead6a8b
-- name: YouTube顺丰资源 俄罗斯_46
-  type: vless
-  server: 46.8.43.125
-  port: 443
-  tls: false
-  skip-cert-verify: false
-  servername: kz-central.v8x2b.lol
-  network: tcp
-  uuid: 846cedee-2a52-4a62-a0b9-11850ead6a8b
-- name: YouTube顺丰资源 俄罗斯_48
-  type: vless
-  server: 46.8.43.125
-  port: 443
-  tls: false
-  skip-cert-verify: false
-  servername: kz-central.v8x2b.lol
-  network: tcp
-  uuid: 846cedee-2a52-4a62-a0b9-11850ead6a8b
 - name: YouTube顺丰资源 美国_50
   type: trojan
   server: www.visa.com.sg
@@ -26292,6 +26438,22 @@ proxies:
     headers:
       Host: 17931084841121.206352.xyz
   password: d9fa9bde-de15-4a5d-bee2-88db7599bfd8
+- name: 俄罗斯  YouTube@小青科学网
+  type: vless
+  server: 147.45.175.81
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: xsru2.freeddns.org
+  servername: xsru2.freeddns.org
+  network: ws
+  ws-opts:
+    path: /wsru
+    headers:
+      Host: xsru2.freeddns.org
+  client-fingerprint: chrome
+  uuid: c90395e6-2140-47ad-a54d-9b166729d3ef
 - name: 美国  YouTube@小青科学网_8
   type: vless
   server: 146.75.59.186
@@ -26588,17 +26750,6 @@ proxies:
   client-fingerprint: chrome
   uuid: 846cedee-2a52-0002-a0b9-11850ead6a8b
   flow: xtls-rprx-vision
-- name: 哈萨克斯坦  YouTube@小青科学网
-  type: vless
-  server: 46.8.43.125
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: kz-central.v8x2b.lol
-  servername: kz-central.v8x2b.lol
-  client-fingerprint: chrome
-  uuid: 846cedee-2a52-4a62-a0b9-11850ead6a8b
 - name: 俄罗斯  YouTube@小青科学网_2
   type: vless
   server: tau1.freerunet.online
@@ -26635,17 +26786,6 @@ proxies:
   client-fingerprint: chrome
   uuid: 16107a06-1b5e-4060-8b48-e13a04b15e56
   flow: xtls-rprx-vision
-- name: 哈萨克斯坦  YouTube@小青科学网_1
-  type: vless
-  server: 46.8.43.125
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: kz-central.v8x2b.lol
-  servername: kz-central.v8x2b.lol
-  client-fingerprint: firefox
-  uuid: 846cedee-2a52-4a62-a0b9-11850ead6a8b
 - name: 荷兰  YouTube@小青科学网_10
   type: vless
   server: 213.152.180.55
@@ -26741,6 +26881,18 @@ proxies:
   servername: www.apple.com
   client-fingerprint: chrome
   uuid: ce17d29c-3587-4d8c-b09d-e03437df8bbd
+  flow: xtls-rprx-vision
+- name: 德国  YouTube@小青科学网_1
+  type: vless
+  server: 78.17.178.125
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: cdn.tbank.ru
+  servername: cdn.tbank.ru
+  client-fingerprint: chrome
+  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
   flow: xtls-rprx-vision
 - name: 荷兰  YouTube@小青科学网_18
   type: vless
@@ -27249,6 +27401,18 @@ proxies:
       Host: cf-1rm.pages.dev
   client-fingerprint: chrome
   uuid: 5e610f80-fc6a-479d-8621-b672355b96a1
+- name: 美国(独立思维) (43)
+  type: vless
+  server: 144.31.213.229
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: 6d160a52.con.fernarchive.online
+  servername: 6d160a52.con.fernarchive.online
+  network: xhttp
+  client-fingerprint: firefox
+  uuid: abca037b-bee5-41cc-a888-0668e4c66176
 - name: 美国(独立思维) (45)
   type: vless
   server: 188.114.96.9
@@ -27369,18 +27533,6 @@ proxies:
   - http/1.1
   client-fingerprint: chrome
   uuid: 22882d2f-b308-43b4-ba72-fdb4d5aa9fb6
-- name: 德国(独立思维) (4)
-  type: vless
-  server: 78.17.178.125
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: cdn.tbank.ru
-  servername: cdn.tbank.ru
-  client-fingerprint: chrome
-  uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
-  flow: xtls-rprx-vision
 - name: 美国(独立思维) (53)
   type: trojan
   server: 172.64.152.23
@@ -27516,28 +27668,6 @@ proxies:
   client-fingerprint: chrome
   uuid: 6c713691-3ca2-4446-ad25-113d1bed6b03
   flow: xtls-rprx-vision
-- name: 俄罗斯(独立思维) (5)
-  type: vless
-  server: 46.8.43.125
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: kz-central.v8x2b.lol
-  servername: kz-central.v8x2b.lol
-  client-fingerprint: firefox
-  uuid: 846cedee-2a52-4a62-a0b9-11850ead6a8b
-- name: 俄罗斯(独立思维) (6)
-  type: vless
-  server: 46.8.43.125
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: kz-central.v8x2b.lol
-  servername: kz-central.v8x2b.lol
-  client-fingerprint: chrome
-  uuid: 846cedee-2a52-4a62-a0b9-11850ead6a8b
 - name: 俄罗斯(独立思维) (7)
   type: vless
   server: tau1.freerunet.online
@@ -27777,17 +27907,29 @@ proxies:
   client-fingerprint: firefox
   uuid: b18d5990-96eb-4587-a386-7f8ef7591e6a
   flow: xtls-rprx-vision
-- name: 美国  YouTube@小青科学网_12
+- name: 荷兰  YouTube@小青科学网_5
   type: vless
-  server: 13.143.184.226
+  server: 104.171.135.229
   port: 443
   tls: true
   skip-cert-verify: false
   udp: true
-  sni: msc1.serverslocal.ru
-  servername: msc1.serverslocal.ru
+  sni: absolute-disaster.org
+  servername: absolute-disaster.org
   client-fingerprint: firefox
-  uuid: 6158d429-74fe-4415-aae5-5ead48c2ecfa
+  uuid: Fluffy_VPN-Oth8rOq3
+  flow: xtls-rprx-vision
+- name: 俄罗斯  YouTube@小青科学网_2
+  type: vless
+  server: 213.159.209.66
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: ru11.oshost.network
+  servername: ru11.oshost.network
+  client-fingerprint: firefox
+  uuid: afbd410e-1663-4f40-9d3b-df5117aa23ca
   flow: xtls-rprx-vision
 - name: 波兰  YouTube@小青科学网
   type: vless
@@ -28300,6 +28442,15 @@ proxies:
   udp: true
   sni: www.cordweave.com
   password: humanity
+- name: YouTube顺丰资源 俄罗斯_80
+  type: vless
+  server: 46.254.19.164
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: wtb.tems.bet
+  network: tcp
+  uuid: a5212bcb-ab85-459a-bec6-9f259eeeebfa
 - name: YouTube顺丰资源 美国_82
   type: vless
   server: 104.21.16.18
@@ -29363,17 +29514,17 @@ proxies:
   uuid: 0cf6d970-3f1d-4aae-a989-92a8f76ae3db
   alterId: 0
   cipher: auto
-- name: 美国  YouTube@小青科学网_36
+- name: 俄罗斯  YouTube@小青科学网
   type: vless
-  server: 31.76.227.57
+  server: 213.159.209.66
   port: 443
   tls: true
   skip-cert-verify: false
   udp: true
-  sni: assets-mi-26.spbstudentlife.com
-  servername: assets-mi-26.spbstudentlife.com
+  sni: ru11.oshost.network
+  servername: ru11.oshost.network
   client-fingerprint: firefox
-  uuid: 07680ffb-0666-4836-b6ad-ec0de62bc38f
+  uuid: afbd410e-1663-4f40-9d3b-df5117aa23ca
   flow: xtls-rprx-vision
 - name: 加拿大  YouTube@小青科学网_5
   type: vless
@@ -29437,6 +29588,18 @@ proxies:
   - http/1.1
   client-fingerprint: chrome
   uuid: 53f03acd-fec1-6685-fc8f-03baf9550cb8
+- name: 俄罗斯  YouTube@小青科学网_20
+  type: vless
+  server: ru11.oshost.network
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: ru11.oshost.network
+  servername: ru11.oshost.network
+  client-fingerprint: chrome
+  uuid: afbd410e-1663-4f40-9d3b-df5117aa23ca
+  flow: xtls-rprx-vision
 - name: 美国  YouTube@小青科学网_85
   type: vless
   server: 104.24.173.112
@@ -30864,20 +31027,6 @@ proxies:
     headers:
       Host: vms.lifetime42.workers.dev
   uuid: 6202b230-417c-4d8e-b624-0f71afa9c75d
-- name: 美国(独立思维) (11)
-  type: vless
-  server: 5.83.129.236
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: host-de-upscale.cdn.cachefleet.com
-  servername: host-de-upscale.cdn.cachefleet.com
-  network: grpc
-  grpc-opts:
-    grpc-service-name: a9w9wmko0k2od14hv8v
-  client-fingerprint: chrome
-  uuid: d86e6fda-e519-46ab-98eb-9ff9a9da5984
 - name: 美国(独立思维) (12)
   type: vless
   server: 217.60.2.212
@@ -31421,6 +31570,18 @@ proxies:
   ws-opts:
     path: /
   uuid: d342d11e-d224-4463-b982-532309285094
+- name: 俄罗斯(独立思维) (9)
+  type: vless
+  server: 5.129.202.80
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: mirror-50.topp-con.xyz
+  servername: mirror-50.topp-con.xyz
+  client-fingerprint: chrome
+  uuid: 7ad63b26-bf70-4872-8fab-ebaf73a1e19d
+  flow: xtls-rprx-vision
 - name: 美国(独立思维) (58)
   type: vless
   server: 104.25.231.228
@@ -31988,18 +32149,6 @@ proxies:
   client-fingerprint: chrome
   uuid: 90157e25-cee1-4217-921e-91f300bc1a24
   flow: xtls-rprx-vision
-- name: 荷兰  YouTube@小青科学网_2
-  type: vless
-  server: 213.165.39.134
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: platform-api.max.ru
-  servername: platform-api.max.ru
-  client-fingerprint: chrome
-  uuid: 6a251a93-8eee-43b5-92ed-ecadedcfd0a8
-  flow: xtls-rprx-vision
 - name: 美国  YouTube@小青科学网_51
   type: vless
   server: 131.143.180.53
@@ -32144,6 +32293,18 @@ proxies:
   client-fingerprint: firefox
   uuid: 6d477a1e-40ec-4e27-940a-d398092e63af
   flow: xtls-rprx-vision
+- name: 德国  YouTube@小青科学网_1
+  type: vless
+  server: 200.96.106.2
+  port: 9889
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: tiktok2.transitbp2systems.com
+  servername: tiktok2.transitbp2systems.com
+  client-fingerprint: firefox
+  uuid: 0dcefe19-a42a-4d57-96be-83dcbffd425f
+  flow: xtls-rprx-vision
 - name: 荷兰  YouTube@小青科学网_7
   type: vless
   server: 15b171g.nl7.h1clayd.click
@@ -32168,6 +32329,30 @@ proxies:
   servername: 76574ct.nl7.h1clayd.click
   client-fingerprint: chrome
   uuid: cda0862a-0f87-4be9-8ed8-1d0c9e382839
+- name: 奥地利  YouTube@小青科学网_3
+  type: vless
+  server: 178.22.31.171
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: at1.japancase.site
+  servername: at1.japancase.site
+  client-fingerprint: edge
+  uuid: db80088c-32a1-4cb8-a907-0f3cb7844152
+  flow: xtls-rprx-vision
+- name: 瑞士  YouTube@小青科学网
+  type: vless
+  server: at1.japancase.site
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: at1.japancase.site
+  servername: at1.japancase.site
+  client-fingerprint: firefox
+  uuid: db80088c-32a1-4cb8-a907-0f3cb7844152
+  flow: xtls-rprx-vision
 - name: 加拿大  YouTube@小青科学网
   type: vmess
   server: 162.159.128.17
@@ -32185,6 +32370,18 @@ proxies:
   uuid: c8b455ad-fff1-43e9-9af9-d97585c4534a
   alterId: 0
   cipher: auto
+- name: 奥地利  YouTube@小青科学网_2
+  type: vless
+  server: 178.22.31.72
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: at1.japancase.site
+  servername: at1.japancase.site
+  client-fingerprint: firefox
+  uuid: db80088c-32a1-4cb8-a907-0f3cb7844152
+  flow: xtls-rprx-vision
 - name: 芬兰  YouTube@小青科学网
   type: vless
   server: 213.176.17.26
@@ -32270,6 +32467,20 @@ proxies:
     headers:
       Host: copy_az_channel_NUFiLTER_10i.global.ssl.fastly.net.
   uuid: 33751cb1-43ea-458c-8dc5-0b8993746bce
+- name: 俄罗斯  YouTube@小青科学网_4
+  type: vless
+  server: xssite.webredirect.org
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: xssite.webredirect.org
+  servername: xssite.webredirect.org
+  network: grpc
+  grpc-opts:
+    grpc-service-name: grpc-ru
+  client-fingerprint: chrome
+  uuid: c90395e6-2140-47ad-a54d-9b166729d3ef
 - name: 美国  YouTube@小青科学网_43
   type: vless
   server: 199.232.249.131
@@ -32321,6 +32532,18 @@ proxies:
   client-fingerprint: firefox
   uuid: 6e10d4e1-1f93-461b-b1c6-90e56c053a11
   flow: xtls-rprx-vision
+- name: 未知  YouTube@小青科学网_23
+  type: vless
+  server: 178.22.31.72
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: at1.japancase.site
+  servername: at1.japancase.site
+  client-fingerprint: chrome
+  uuid: db80088c-32a1-4cb8-a907-0f3cb7844152
+  flow: xtls-rprx-vision
 - name: 未知  YouTube@小青科学网_24
   type: vless
   server: 15b171g.nl7.h1clayd.click
@@ -32351,6 +32574,30 @@ proxies:
       Host: copy_az_channel_NUFiLTER_10i.global.ssl.fastly.net.
   client-fingerprint: chrome
   uuid: 33751cb1-43ea-458c-8dc5-0b8993746bce
+- name: 奥地利  YouTube@小青科学网
+  type: vless
+  server: at1.japancase.site
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: at1.japancase.site
+  servername: at1.japancase.site
+  client-fingerprint: chrome
+  uuid: db80088c-32a1-4cb8-a907-0f3cb7844152
+  flow: xtls-rprx-vision
+- name: 奥地利  YouTube@小青科学网_1
+  type: vless
+  server: at1.japancase.site
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: at1.japancase.site
+  servername: at1.japancase.site
+  client-fingerprint: edge
+  uuid: db80088c-32a1-4cb8-a907-0f3cb7844152
+  flow: xtls-rprx-vision
 - name: 土耳其  YouTube@小青科学网_2
   type: vless
   server: 5.104.74.70
@@ -32436,6 +32683,22 @@ proxies:
   client-fingerprint: firefox
   uuid: 7ea09162-0f21-485e-b576-dcedc8b6587b
   flow: xtls-rprx-vision
+- name: 俄罗斯  YouTube@小青科学网_3
+  type: vless
+  server: xsru2.freeddns.org
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: xsru2.freeddns.org
+  servername: xsru2.freeddns.org
+  network: ws
+  ws-opts:
+    path: /wsru
+    headers:
+      Host: xsru2.freeddns.org
+  client-fingerprint: chrome
+  uuid: c90395e6-2140-47ad-a54d-9b166729d3ef
 - name: 俄罗斯  YouTube@小青科学网_5
   type: vless
   server: bananapococoho.izzzyvpn.space
@@ -32460,6 +32723,20 @@ proxies:
   client-fingerprint: chrome
   uuid: a2f6d001-cc82-4fa3-b200-cfa0c0ed341f
   flow: xtls-rprx-vision
+- name: 俄罗斯  YouTube@小青科学网_7
+  type: vless
+  server: xsru1.ddnsfree.com
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: xsru1.ddnsfree.com
+  servername: xsru1.ddnsfree.com
+  network: grpc
+  grpc-opts:
+    grpc-service-name: grpc-ru
+  client-fingerprint: random
+  uuid: c90395e6-2140-47ad-a54d-9b166729d3ef
 - name: 未知  YouTube@小青科学网_15
   type: vless
   server: ip13.shabkhosh.sbs
@@ -32642,15 +32919,6 @@ proxies:
   servername: ru-mow.probe.geomyip.com
   network: tcp
   uuid: c5f59ef3-9540-49fa-bd1e-c6c2f79df49a
-- name: YouTube顺丰资源 黎巴嫩_14
-  type: vless
-  server: 213.165.39.134
-  port: 443
-  tls: false
-  skip-cert-verify: false
-  servername: platform-api.max.ru
-  network: tcp
-  uuid: 6a251a93-8eee-43b5-92ed-ecadedcfd0a8
 - name: YouTube顺丰资源 Nofound_15
   type: vmess
   server: 162.159.128.17
@@ -33334,6 +33602,24 @@ proxies:
   servername: flarora.ferreo.sbs
   network: tcp
   uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
+- name: YouTube顺丰资源 巴西_202
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
+- name: YouTube顺丰资源 巴西_203
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
 - name: YouTube顺丰资源 加拿大_207
   type: vless
   server: 130.12.102.125
@@ -33760,6 +34046,30 @@ proxies:
       Host: v6-95o.pages.dev
   client-fingerprint: chrome
   uuid: bf14dc50-e9f2-49fd-8642-620446edeafb
+- name: 俄罗斯(独立思维)
+  type: vless
+  server: 72.56.38.83
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: absolute-disaster.org
+  servername: absolute-disaster.org
+  client-fingerprint: firefox
+  uuid: Fluffy_VPN-zKZUa4Ie
+  flow: xtls-rprx-vision
+- name: 俄罗斯(独立思维) (2)
+  type: vless
+  server: 72.56.38.83
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: absolute-disaster.org
+  servername: absolute-disaster.org
+  client-fingerprint: chrome
+  uuid: 1e2b9c0c-4f9b-56f5-a062-1c4f2d2aa200
+  flow: xtls-rprx-vision
 - name: 德国(独立思维) (6)
   type: vless
   server: 109.237.97.238
@@ -33855,6 +34165,18 @@ proxies:
   ws-opts:
     path: /
   uuid: 99c5b713-dedf-4a10-8070-916ff3f49b0e
+- name: 俄罗斯(独立思维) (3)
+  type: vless
+  server: 5.129.202.80
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: mirror-50.topp-con.xyz
+  servername: mirror-50.topp-con.xyz
+  client-fingerprint: chrome
+  uuid: 7ad63b26-bf70-4872-8fab-ebaf73a1e19d
+  flow: xtls-rprx-vision
 - name: 日本(独立思维) (3)
   type: vless
   server: 5.157.30.3
@@ -34337,18 +34659,6 @@ proxies:
   network: xhttp
   client-fingerprint: firefox
   uuid: 29777784-b5ad-4e2a-be7b-335f033ab97c
-- name: 俄罗斯  YouTube@小青科学网_4
-  type: vless
-  server: ru7e2bab87cc39.eu-cdn539.com
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  udp: true
-  sni: ru7e2bab87cc39.eu-cdn539.com
-  servername: ru7e2bab87cc39.eu-cdn539.com
-  client-fingerprint: firefox
-  uuid: e75ad2eb-6c1f-45ce-8023-f5f10875df66
-  flow: xtls-rprx-vision
 - name: 香港  YouTube@小青科学网_2
   type: vless
   server: 31.58.213.235
@@ -35348,6 +35658,14 @@ proxies:
   udp: true
   sni: www.calmlunch.com
   password: humanity
+- name: YouTube顺丰资源 瑞士_88
+  type: trojan
+  server: 193.239.160.134
+  port: 443
+  skip-cert-verify: true
+  udp: true
+  sni: www.calmlunch.com
+  password: humanity
 - name: YouTube顺丰资源 美国_89
   type: vmess
   server: 172.67.167.78
@@ -35440,6 +35758,15 @@ proxies:
   uuid: db50a20e-7ff5-4e70-948f-17cc9ca7c154
   alterId: 0
   cipher: auto
+- name: YouTube顺丰资源 巴西_102
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
 - name: YouTube顺丰资源 美国_103
   type: vless
   server: 208.103.161.249
@@ -35536,6 +35863,24 @@ proxies:
     headers:
       host: 104.17.74.206
   uuid: 542fd687-5160-4f80-9223-56678567dd29
+- name: YouTube顺丰资源 巴西_120
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
+- name: YouTube顺丰资源 巴西_121
+  type: vless
+  server: 200.165.229.159
+  port: 443
+  tls: false
+  skip-cert-verify: false
+  servername: flarora.ferreo.sbs
+  network: tcp
+  uuid: 3db8407b-1f96-4b82-bfeb-55258c1e57b4
 - name: YouTube顺丰资源 巴西_122
   type: vless
   server: 200.165.229.159
@@ -36220,6 +36565,18 @@ proxies:
   servername: hk.catxstar.com
   client-fingerprint: chrome
   password: d9064589-74af-432a-9390-5d8a9da281bf
+- name: 荷兰  YouTube@小青科学网_4
+  type: vless
+  server: 104.171.135.229
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: absolute-disaster.org
+  servername: absolute-disaster.org
+  client-fingerprint: chrome
+  uuid: Fluffy_VPN-Oth8rOq3
+  flow: xtls-rprx-vision
 - name: 新加坡  YouTube@小青科学网
   type: vless
   server: 43.170.8.95
@@ -36247,6 +36604,18 @@ proxies:
   servername: 7aa271t.es1.h1clayd.click
   client-fingerprint: firefox
   uuid: 4201786b-d99b-4147-a5f0-20d47acddb81
+  flow: xtls-rprx-vision
+- name: 荷兰  YouTube@小青科学网_5
+  type: vless
+  server: 201.51.11.65
+  port: 443
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: absolute-disaster.org
+  servername: absolute-disaster.org
+  client-fingerprint: firefox
+  uuid: Fluffy_VPN-zKZUa4Ie
   flow: xtls-rprx-vision
 - name: 美国  YouTube@小青科学网_23
   type: vless
@@ -36276,6 +36645,16 @@ proxies:
   sni: hk.catxstar.com
   servername: hk.catxstar.com
   password: d7563108-615c-4338-a7bd-77f359869a4a
+- name: 未知  YouTube@小青科学网_13
+  type: trojan
+  server: sclass-00.catcat321.com
+  port: 20103
+  tls: true
+  skip-cert-verify: false
+  udp: true
+  sni: hk.catxstar.com
+  servername: hk.catxstar.com
+  password: d9064589-74af-432a-9390-5d8a9da281bf
 - name: 加拿大  YouTube@小青科学网_16
   type: vless
   server: 172.64.152.19
@@ -36487,15 +36866,6 @@ proxies:
   cipher: aes-256-gcm
   password: ZRpgaBeGxtENIXgvhpkZBKz9GnWRS2dYcx9O+a2iwN4=
   udp: true
-- name: YouTube顺丰资源 日本_12
-  type: vless
-  server: zfapi.zalolink.com
-  port: 30322
-  tls: false
-  skip-cert-verify: false
-  servername: psstatic.cdn.bcebos.com
-  network: tcp
-  uuid: 57beeeb0-03fc-4fc9-94da-7604488a7134
 - name: YouTube顺丰资源 新西兰_13
   type: ss
   server: 202.50.253.36
@@ -36568,15 +36938,6 @@ proxies:
   cipher: 2022-blake3-chacha20-poly1305
   password: 8yO3ANWefuuGs1lRKXECQA1FEhxlWFV2ppQMcBaZo5Y=
   udp: true
-- name: YouTube顺丰资源 日本_28
-  type: vless
-  server: zfapi.zalolink.com
-  port: 55688
-  tls: false
-  skip-cert-verify: false
-  servername: bilibili-vn.biliimg.com
-  network: tcp
-  uuid: 57beeeb0-03fc-4fc9-94da-7604488a7134
 - name: YouTube顺丰资源 西班牙_29
   type: vless
   server: 196.196.148.63
@@ -36631,6 +36992,22 @@ proxies:
   uuid: 0cf6d970-3f1d-4aae-a989-92a8f76ae3db
   alterId: 0
   cipher: auto
+- name: YouTube顺丰资源 日本_34
+  type: trojan
+  server: sclass-c1.catcat321.com
+  port: 20086
+  skip-cert-verify: true
+  udp: true
+  sni: hk.catxstar.com
+  password: d9064589-74af-432a-9390-5d8a9da281bf
+- name: YouTube顺丰资源 Nofound_35
+  type: trojan
+  server: sclass-c1.catcat321.com
+  port: 20086
+  skip-cert-verify: false
+  udp: true
+  sni: hk.catxstar.com
+  password: d9064589-74af-432a-9390-5d8a9da281bf
 - name: YouTube顺丰资源 以色列_36
   type: vless
   server: 79.182.39.131
@@ -36739,6 +37116,14 @@ proxies:
   servername: e60833x.nl7.h1clayd.click
   network: xhttp
   uuid: cda0862a-0f87-4be9-8ed8-1d0c9e382839
+- name: YouTube顺丰资源 美国_49
+  type: trojan
+  server: sclass-00.catcat321.com
+  port: 20103
+  skip-cert-verify: true
+  udp: true
+  sni: hk.catxstar.com
+  password: d9064589-74af-432a-9390-5d8a9da281bf
 - name: YouTube顺丰资源 西班牙_50
   type: vless
   server: 196.196.149.80
@@ -36846,24 +37231,6 @@ proxies:
   servername: base.hosamobenl.co.uk
   network: tcp
   uuid: 667016ca-f02e-4b5f-bfc3-3d8ed81e9bec
-- name: YouTube顺丰资源 英国_66
-  type: vless
-  server: static.66.192.105.178.clients.your-server.de.savfasf.ir
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  servername: tcptlsdigikala.savfasf.ir
-  network: tcp
-  uuid: f8432887-bd79-4e91-9c16-b45a9ad9275d
-- name: YouTube顺丰资源 日本_67
-  type: vless
-  server: zfapi.zalolink.com
-  port: 11802
-  tls: false
-  skip-cert-verify: false
-  servername: psstatic.cdn.bcebos.com
-  network: tcp
-  uuid: 57beeeb0-03fc-4fc9-94da-7604488a7134
 - name: YouTube顺丰资源 美国_68
   type: vless
   server: 152.42.173.234
@@ -37759,16 +38126,16 @@ proxies:
     headers:
       host: fq.jp188.dpdns.org
   uuid: 42c62a5a-cd31-4551-80ef-908732370287
-- name: 🇹🇼_TW_台湾_IPV4
+- name: 🇩🇪_DE_德国->🇫🇷_FR_法国_IPV4
   type: vless
-  server: free.fugui.lol
-  port: 47396
+  server: 163.245.42.87
+  port: 443
   tls: true
   skip-cert-verify: false
-  sni: swdist.apple.com
-  servername: swdist.apple.com
-  client-fingerprint: chrome
-  uuid: ead3595f-4020-4e76-a3ec-c248e1a2f2f7
+  sni: mother-earth.fyi
+  servername: mother-earth.fyi
+  client-fingerprint: firefox
+  uuid: b9bfa54d-bc44-4592-a6d6-89a9665d286f
   flow: xtls-rprx-vision
 - name: 🇺🇸_US_美国->🇩🇪_DE_德国_IPV4
   type: vless
@@ -37800,12 +38167,6 @@ proxies:
       Host: free-config-bot-development-33s35.lucity.app
   client-fingerprint: firefox
   uuid: 474c5a2e-96eb-fa3f-6639-cbd2129c8027
-- name: 🇷🇺_RU_俄罗斯->🇺🇸_US_美国_IPV4
-  type: ss
-  server: 48.103.218.241
-  port: 18443
-  cipher: aes-256-gcm
-  password: Lpq5UPVHtQYiuB9jEUNc2WkeIYCUH9DE
 - name: 🇸🇬_SG_新加坡_IPV4 (2)
   type: vless
   server: 139.162.20.241
@@ -37926,335 +38287,6 @@ proxies:
       Host: itunes.apple.com
   client-fingerprint: chrome
   uuid: 3c8a110d-f04d-4f0e-9579-fd00631b8830
-- name: 🇺🇸_US_美国_IPV4 (5)
-  type: vless
-  server: 172.233.142.149
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: 61e3954d-0d66-4b69-b6cd-9b4fc2352303
-- name: 🇸🇬_SG_新加坡_IPV4 (4)
-  type: vless
-  server: 139.180.221.53
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: 2b30d0df-6ebe-4aed-9bad-b7c554e35e1d
-- name: 🇯🇵_JP_日本_IPV4 (4)
-  type: vless
-  server: 45.76.222.108
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: bd95a04e-e3e1-460e-b89d-e9a693d393e0
-- name: 🇺🇸_US_美国_IPV4 (6)
-  type: vless
-  server: 172.236.241.130
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: 21117a67-21c2-4e2a-ba8f-bc49e23b0ae8
-- name: 🇺🇸_US_美国_IPV4 (7)
-  type: vless
-  server: 172.235.37.168
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: dbac71f3-ab05-4194-985b-f07088bf1a4a
-- name: 🇺🇸_US_美国_IPV4 (8)
-  type: vless
-  server: 172.236.233.130
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: a663dc28-28dc-4f97-9665-6ac215c8e567
-- name: 🇺🇸_US_美国_IPV4 (9)
-  type: vless
-  server: 107.191.58.86
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: 4444e77e-3d2a-4dc9-bf31-936f038f5570
-- name: 🇺🇸_US_美国_IPV4 (10)
-  type: vless
-  server: 172.235.48.245
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: c923b26b-a941-456d-8ccc-834f3b4080e0
-- name: 🇯🇵_JP_日本_IPV4 (5)
-  type: vless
-  server: 139.162.125.126
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: eb6cf336-03bd-4dac-9f2a-3e456389279e
-- name: 🇺🇸_US_美国_IPV4 (11)
-  type: vless
-  server: 172.233.129.65
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: 9d91b606-9117-4f8f-8df7-dda7facf3a57
-- name: 🇺🇸_US_美国_IPV4 (12)
-  type: vless
-  server: 172.233.129.172
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: itunes.apple.com
-  servername: itunes.apple.com
-  network: ws
-  ws-opts:
-    path: /ws
-    headers:
-      Host: itunes.apple.com
-  client-fingerprint: chrome
-  uuid: 40a4b915-5e6f-4316-9bb1-e899f30608e3
-- name: 🇸🇨_SC_塞舌尔->🇳🇱_NL_荷兰_IPV4
-  type: vless
-  server: 196.196.148.63
-  port: 443
-  tls: true
-  skip-cert-verify: false
-  sni: 717252g.nl8.h1clayd.click
-  servername: 717252g.nl8.h1clayd.click
-  network: grpc
-  grpc-opts:
-    grpc-service-name: 204adda7e3da
-  client-fingerprint: firefox
-  uuid: cda0862a-0f87-4be9-8ed8-1d0c9e382839
-- name: 🇺🇸 机场推荐:dafei.de 美国 89_IPV4
-  type: vmess
-  server: 188.114.99.137
-  port: 443
-  tls: true
-  sni: guanwang.awsno.com
-  servername: guanwang.awsno.com
-  network: ws
-  ws-opts:
-    path: /hls/cctv5phd.m3u8
-    headers:
-      Host: guanwang.awsno.com
-  client-fingerprint: chrome
-  uuid: 6a89a215-22bf-4bd7-9642-b95b2e09583a
-  alterId: 0
-  cipher: auto
-- name: 🇺🇸_US_美国_IPV4 (13)
-  type: vmess
-  server: 104.18.42.163
-  port: 443
-  tls: true
-  sni: guanwang.awsno.com
-  servername: guanwang.awsno.com
-  network: ws
-  ws-opts:
-    path: /hls/cctv5phd.m3u8
-    headers:
-      Host: guanwang.awsno.com
-  client-fingerprint: chrome
-  uuid: 6a89a215-22bf-4bd7-9642-b95b2e09583a
-  alterId: 0
-  cipher: auto
-- name: '@DeltaKroneckerGithub_3021_IPV4'
-  type: vmess
-  server: 172.64.145.93
-  port: 443
-  tls: true
-  sni: guanwang.awsno.com
-  servername: guanwang.awsno.com
-  network: ws
-  ws-opts:
-    path: /hls/cctv5phd.m3u8
-    headers:
-      Host: guanwang.awsno.com
-  uuid: 6a89a215-22bf-4bd7-9642-b95b2e09583a
-  alterId: 0
-  cipher: auto
-- name: 🇦🇪[www.v2nodes.com] vless-AE-1...
-  type: vless
-  server: 95.174.68.188
-  port: 14430
-  tls: false
-  servername: 95.174.68.188
-  network: ws
-  ws-opts:
-    headers:
-      Host: 95.174.68.188
-    path: /vless
-  uuid: 965ffbbe-c6b6-4d5f-8dea-6d8abc55d9c0
-- name: 🇧🇾[www.v2nodes.com] vless-BY-1...
-  type: vless
-  server: 178.172.227.228
-  port: 14430
-  tls: false
-  network: ws
-  ws-opts:
-    headers:
-      Host: 178.172.227.228
-    path: /vless
-  uuid: b6e5dc56-836f-48c1-9163-b0b0b43b647d
-- name: '🇧🇾[www.v2nodes.com] vless-BY-1... #1'
-  type: vless
-  server: 178.172.227.124
-  port: 10443
-  tls: false
-  uuid: 1af36694-b548-4b18-89a0-bc076eab4ed7
-- name: '🇸🇬[www.v2nodes.com] vless-SG-7... #1'
-  type: vless
-  server: 188.114.98.0
-  port: 443
-  tls: true
-  servername: rayAN21-6yU73878-v3.raYAn-21.woRKers.dEV
-  network: ws
-  ws-opts:
-    headers:
-      Host: rayAN21-6yU73878-v3.raYAn-21.woRKers.dEV
-    path: /?ed=2560fp=unsafe
-  alpn:
-  - http/1.1
-  uuid: ec24cde1-6bd9-4b69-baf7-270e8aabd6dd
-- name: '🇨🇦[www.v2nodes.com] vless-CA-1... #2'
-  type: vless
-  server: cf.008500.xyz
-  port: 443
-  tls: true
-  servername: powered-by-surena.configfarsi695fd01a94fe7.workers.dev
-  network: ws
-  ws-opts:
-    headers:
-      Host: powered-by-surena.configfarsi695fd01a94fe7.workers.dev
-    path: /?ed=2560fp=chrome
-  uuid: 5dc15e15-f285-4a9d-959b-0e4fbdd77b63
-- name: '🏳[www.v2nodes.com] vless- #14'
-  type: vless
-  server: 104.26.13.31
-  port: 8080
-  tls: false
-  servername: ip.sb
-  network: ws
-  ws-opts:
-    headers:
-      Host: bdfba-cool-tree-b580.v8fz4kbv.workers.dev
-    path: /
-  uuid: 3e06b1db-2efb-446e-ba2d-68850dfd2f9d
-- name: '🇨🇦[www.v2nodes.com] vless-CA-1... #4'
-  type: vless
-  server: 188.114.98.0
-  port: 443
-  tls: true
-  servername: tn1r.eu.cc
-  network: ws
-  ws-opts:
-    headers:
-      Host: tn1r.eu.cc
-    path: /id-pusat
-  client-fingerprint: chrome
-  uuid: 22424ee2-6fe3-42ca-9749-6d4c5a8acc82
-- name: '🇩🇪[www.v2nodes.com] vless-DE-1... #3'
-  type: vless
-  server: ir2.cryptojakiro.com
-  port: 443
-  tls: true
-  servername: ir2.cryptojakiro.com
-  network: ws
-  ws-opts:
-    headers:
-      Host: ir2.cryptojakiro.com
-    path: /
-  client-fingerprint: chrome
-  uuid: 8a1a991a-f206-447a-adaf-37a57c133418
-- name: '🏳[www.v2nodes.com] vless- #2'
-  type: vless
-  server: 5.83.129.236
-  port: 443
-  tls: true
-  servername: host-de-upscale.cdn.cachefleet.com
-  network: grpc
-  grpc-opts:
-    grpc-service-name: a9w9wmko0k2od14hv8v
-  client-fingerprint: chrome
-  uuid: d86e6fda-e519-46ab-98eb-9ff9a9da5984
 proxy-groups:
 - name: Auto
   type: select
@@ -38315,6 +38347,7 @@ proxy-groups:
   - 美国(独立思维)_47
   - 俄罗斯(独立思维)_5
   - 俄罗斯(独立思维)_6
+  - 白俄(独立思维)
   - 美国(独立思维)_49
   - 俄罗斯(独立思维)_7
   - 美国(独立思维)_51
@@ -38389,6 +38422,7 @@ proxy-groups:
   - 美国  YouTube@小青科学网_6
   - 美国  YouTube@小青科学网_32
   - 未知  YouTube@小青科学网_2
+  - 俄罗斯  YouTube@小青科学网
   - 美国  YouTube@小青科学网_29
   - 美国  YouTube@小青科学网_63
   - 美国  YouTube@小青科学网_33
@@ -38493,6 +38527,7 @@ proxy-groups:
   - 美国  YouTube@小青科学网_19
   - YouTube顺丰资源 美国_7
   - YouTube顺丰资源 俄罗斯_12
+  - YouTube顺丰资源 瑞士_15
   - YouTube顺丰资源 巴西_16
   - YouTube顺丰资源 巴西_22
   - YouTube顺丰资源 美国_24
@@ -38554,7 +38589,6 @@ proxy-groups:
   - YouTube顺丰资源 美国_112
   - YouTube顺丰资源 美国_113
   - YouTube顺丰资源 美国_114
-  - YouTube顺丰资源 美国_118
   - YouTube顺丰资源 美国_119
   - YouTube顺丰资源 瑞士_121
   - YouTube顺丰资源 美国_122
@@ -38565,6 +38599,7 @@ proxy-groups:
   - YouTube顺丰资源 美国_129
   - YouTube顺丰资源 丹麦_130
   - YouTube顺丰资源 美国_134
+  - YouTube顺丰资源 巴西_135
   - YouTube顺丰资源 美国_136
   - YouTube顺丰资源 美国_137
   - YouTube顺丰资源 英国_138
@@ -38575,6 +38610,8 @@ proxy-groups:
   - YouTube顺丰资源 美国_149
   - YouTube顺丰资源 美国_152
   - YouTube顺丰资源 巴西_153
+  - YouTube顺丰资源 巴西_154
+  - YouTube顺丰资源 巴西_155
   - YouTube顺丰资源 加拿大_159
   - YouTube顺丰资源 美国_162
   - YouTube顺丰资源 美国_164
@@ -38658,7 +38695,6 @@ proxy-groups:
   - 美国(yudou99.com 玉豆分享)_12
   - 美国(yudou99.com 玉豆分享)_13
   - 美国(yudou99.com 玉豆分享)_14
-  - 美国(yudou99.com 玉豆分享)_15
   - 美国(yudou99.com 玉豆分享)_18
   - 新加坡(yudou99.com 玉豆分享)_2
   - 美国(yudou99.com 玉豆分享)_20
@@ -38720,9 +38756,7 @@ proxy-groups:
   - 美国(yudou99.com 玉豆分享)_74
   - 美国(yudou99.com 玉豆分享)_75
   - 香港(yudou99.com 玉豆分享)_1
-  - 美国(yudou99.com 玉豆分享)_76
   - 美国(yudou99.com 玉豆分享)_77
-  - 美国(yudou99.com 玉豆分享)_78
   - 美国(yudou99.com 玉豆分享)_80
   - 日本(yudou99.com 玉豆分享)_9
   - 美国(yudou99.com 玉豆分享)_81
@@ -38737,15 +38771,14 @@ proxy-groups:
   - 加拿大(yudou99.com 玉豆分享)_1
   - 美国(yudou99.com 玉豆分享)_94
   - 越南(yudou99.com 玉豆分享)_3
+  - 俄罗斯(yudou99.com 玉豆分享)_3
   - 美国(yudou99.com 玉豆分享)_96
   - 美国(yudou99.com 玉豆分享)_97
-  - 英国(yudou99.com 玉豆分享)_2
   - 俄罗斯(yudou99.com 玉豆分享)_4
   - 美国(yudou99.com 玉豆分享)_99
   - 美国(yudou99.com 玉豆分享)_100
   - 美国(yudou99.com 玉豆分享)_101
   - 美国(yudou99.com 玉豆分享)_102
-  - 美国(yudou99.com 玉豆分享)_104
   - 美国(yudou99.com 玉豆分享)_105
   - 美国(yudou99.com 玉豆分享)_106
   - 美国(yudou99.com 玉豆分享)_107
@@ -38755,7 +38788,6 @@ proxy-groups:
   - YouTube顺丰资源 英国_14
   - YouTube顺丰资源 英国_16
   - YouTube顺丰资源 美国_21
-  - YouTube顺丰资源 美国_29
   - YouTube顺丰资源 法国_35
   - YouTube顺丰资源 美国_37
   - YouTube顺丰资源 美国_39
@@ -38774,6 +38806,7 @@ proxy-groups:
   - YouTube顺丰资源 美国_58
   - YouTube顺丰资源 丹麦_59
   - YouTube顺丰资源 美国_63
+  - YouTube顺丰资源 巴西_64
   - YouTube顺丰资源 美国_65
   - YouTube顺丰资源 美国_66
   - YouTube顺丰资源 加拿大_67
@@ -38783,7 +38816,9 @@ proxy-groups:
   - YouTube顺丰资源 美国_77
   - YouTube顺丰资源 美国_79
   - YouTube顺丰资源 美国_81
+  - YouTube顺丰资源 巴西_82
   - YouTube顺丰资源 巴西_83
+  - YouTube顺丰资源 巴西_84
   - YouTube顺丰资源 加拿大_88
   - YouTube顺丰资源 美国_91
   - YouTube顺丰资源 美国_93
@@ -38829,7 +38864,6 @@ proxy-groups:
   - YouTube顺丰资源 韩国_191
   - YouTube顺丰资源 美国_194
   - YouTube顺丰资源 美国_198
-  - 德国  YouTube@小青科学网_1
   - 美国  YouTube@小青科学网_5
   - 美国  YouTube@小青科学网_6
   - 美国  YouTube@小青科学网_7
@@ -38845,6 +38879,7 @@ proxy-groups:
   - 美国  YouTube@小青科学网_23
   - 未知  YouTube@小青科学网_3
   - 加拿大  YouTube@小青科学网_1
+  - 俄罗斯  YouTube@小青科学网
   - 未知  YouTube@小青科学网_4
   - 未知  YouTube@小青科学网_5
   - 未知  YouTube@小青科学网_6
@@ -38907,7 +38942,6 @@ proxy-groups:
   - 俄罗斯  YouTube@小青科学网_1
   - 未知  YouTube@小青科学网_31
   - 香港  YouTube@小青科学网_6
-  - 德国  YouTube@小青科学网_10
   - 丹麦  YouTube@小青科学网
   - 未知  YouTube@小青科学网_32
   - 埃及  YouTube@小青科学网
@@ -38940,7 +38974,6 @@ proxy-groups:
   - 美国  YouTube@小青科学网_58
   - 美国  YouTube@小青科学网_60
   - 美国  YouTube@小青科学网_61
-  - 美国  YouTube@小青科学网_64
   - 美国  YouTube@小青科学网_65
   - 美国  YouTube@小青科学网_66
   - 美国  YouTube@小青科学网_69
@@ -38966,6 +38999,7 @@ proxy-groups:
   - 日本  YouTube@小青科学网_23
   - 新加坡  YouTube@小青科学网_19
   - 荷兰  YouTube@小青科学网_8
+  - 俄罗斯  YouTube@小青科学网_2
   - 未知  YouTube@小青科学网_40
   - 新加坡  YouTube@小青科学网_20
   - 美国  YouTube@小青科学网_78
@@ -38995,7 +39029,6 @@ proxy-groups:
   - 未知  YouTube@小青科学网_49
   - 未知  YouTube@小青科学网_51
   - 未知  YouTube@小青科学网_52
-  - 未知  YouTube@小青科学网_54
   - 未知  YouTube@小青科学网_55
   - 未知  YouTube@小青科学网_56
   - 未知  YouTube@小青科学网_63
@@ -39030,6 +39063,7 @@ proxy-groups:
   - 美国_xiaozhou168.top_3
   - 日本_xiaozhou168.top_6
   - 新加坡_xiaozhou168.top_7
+  - 日本_xiaozhou168.top_9
   - 日本_xiaozhou168.top_10
   - 新加坡_xiaozhou168.top_11
   - 新加坡_xiaozhou168.top_12
@@ -39054,12 +39088,12 @@ proxy-groups:
   - 瑞士_xiaozhou168.top_36
   - 未知_xiaozhou168.top_37
   - 德国_xiaozhou168.top_39
-  - 德国_xiaozhou168.top_40
   - 保加利亚_xiaozhou168.top_42
   - 美国_xiaozhou168.top_43
   - 荷兰_xiaozhou168.top_45
   - 英国_xiaozhou168.top_46
   - 美国_xiaozhou168.top_47
+  - 俄罗斯_xiaozhou168.top_49
   - 捷克_xiaozhou168.top_50
   - 未知_xiaozhou168.top_55
   - 法国_xiaozhou168.top_57
@@ -39091,6 +39125,8 @@ proxy-groups:
   - 阿塞拜疆_xiaozhou168.top_104
   - 德国_xiaozhou168.top_106
   - 波兰_xiaozhou168.top_107
+  - 比利时_xiaozhou168.top_108
+  - 比利时_xiaozhou168.top_109
   - 塞浦路斯_xiaozhou168.top_111
   - 韩国_xiaozhou168.top_114
   - 美国_xiaozhou168.top_115
@@ -39131,6 +39167,7 @@ proxy-groups:
   - 美国_xiaozhou168.top_180
   - 未知_xiaozhou168.top_181
   - 美国_xiaozhou168.top_182
+  - 俄罗斯_xiaozhou168.top_183
   - 未知_xiaozhou168.top_184
   - 未知_xiaozhou168.top_185
   - 美国_xiaozhou168.top_186
@@ -39200,7 +39237,6 @@ proxy-groups:
   - 白俄罗斯_xiaozhou168.top_282
   - 智利_xiaozhou168.top_283
   - 香港_xiaozhou168.top_284
-  - 德国_xiaozhou168.top_285
   - 丹麦_xiaozhou168.top_286
   - 爱沙尼亚_xiaozhou168.top_287
   - 埃及_xiaozhou168.top_288
@@ -39233,7 +39269,6 @@ proxy-groups:
   - 美国_xiaozhou168.top_329
   - 美国_xiaozhou168.top_331
   - 美国_xiaozhou168.top_332
-  - 美国_xiaozhou168.top_335
   - 美国_xiaozhou168.top_336
   - 美国_xiaozhou168.top_337
   - 美国_xiaozhou168.top_340
@@ -39259,6 +39294,7 @@ proxy-groups:
   - 日本_xiaozhou168.top_379
   - 新加坡_xiaozhou168.top_380
   - 荷兰_xiaozhou168.top_382
+  - 俄罗斯_xiaozhou168.top_383
   - 未知_xiaozhou168.top_384
   - 新加坡_xiaozhou168.top_390
   - 新加坡_xiaozhou168.top_391
@@ -39288,7 +39324,6 @@ proxy-groups:
   - 日本_xiaozhou168.top_431
   - 丹麦_xiaozhou168.top_433
   - 未知_xiaozhou168.top_434
-  - 美国_xiaozhou168.top_436
   - 亚美尼亚_xiaozhou168.top_437
   - 新加坡_xiaozhou168.top_438
   - 阿尔巴尼亚_xiaozhou168.top_444
@@ -39324,6 +39359,7 @@ proxy-groups:
   - 日本(独立思维)_4
   - 新加坡(独立思维)
   - 美国(独立思维)_9
+  - 日本(独立思维)_5
   - 美国(独立思维)_11
   - 美国(独立思维)_12
   - 新加坡(独立思维)_1
@@ -39361,7 +39397,6 @@ proxy-groups:
   - 美国(独立思维)_32
   - 美国(独立思维)_33
   - 美国(独立思维)_34
-  - 德国(独立思维)_8
   - 美国(独立思维)_35
   - 美国(独立思维)_36
   - 美国(独立思维)_37
@@ -39370,7 +39405,9 @@ proxy-groups:
   - 英国(独立思维)
   - 美国(独立思维)_40
   - 美国(独立思维)_41
+  - 俄罗斯(独立思维)
   - 美国(独立思维)_42
+  - 俄罗斯(独立思维)_1
   - 美国(独立思维)_45
   - 美国(独立思维)_46
   - 美国(独立思维)_48
@@ -39431,6 +39468,8 @@ proxy-groups:
   - 美国(独立思维)_101
   - 德国(独立思维)_23
   - 美国(独立思维)_102
+  - 美国(独立思维)_103
+  - 比利时(独立思维)
   - 美国(独立思维)_104
   - 美国(独立思维)_107
   - 美国(独立思维)_108
@@ -39451,6 +39490,7 @@ proxy-groups:
   - 美国(yudou99.com 玉豆分享)_6
   - 新加坡(yudou99.com 玉豆分享)
   - 美国(yudou99.com 玉豆分享)_9
+  - 日本(yudou99.com 玉豆分享)_5
   - 美国(yudou99.com 玉豆分享)_11
   - 美国(yudou99.com 玉豆分享)_12
   - 新加坡(yudou99.com 玉豆分享)_1
@@ -39466,6 +39506,7 @@ proxy-groups:
   - 新加坡(yudou99.com 玉豆分享)_5
   - 新加坡(yudou99.com 玉豆分享)_6
   - 美国(yudou99.com 玉豆分享)_16
+  - 韩国(yudou99.com 玉豆分享)_1
   - 美国(yudou99.com 玉豆分享)_18
   - 韩国(yudou99.com 玉豆分享)_2
   - 德国(yudou99.com 玉豆分享)_1
@@ -39488,7 +39529,6 @@ proxy-groups:
   - 美国(yudou99.com 玉豆分享)_31
   - 美国(yudou99.com 玉豆分享)_32
   - 美国(yudou99.com 玉豆分享)_33
-  - 德国(yudou99.com 玉豆分享)_8
   - 美国(yudou99.com 玉豆分享)_35
   - 美国(yudou99.com 玉豆分享)_36
   - 美国(yudou99.com 玉豆分享)_37
@@ -39497,7 +39537,9 @@ proxy-groups:
   - 荷兰(yudou99.com 玉豆分享)
   - 英国(yudou99.com 玉豆分享)
   - 美国(yudou99.com 玉豆分享)_40
+  - 俄罗斯(yudou99.com 玉豆分享)
   - 美国(yudou99.com 玉豆分享)_42
+  - 俄罗斯(yudou99.com 玉豆分享)_1
   - 美国(yudou99.com 玉豆分享)_45
   - 美国(yudou99.com 玉豆分享)_46
   - 美国(yudou99.com 玉豆分享)_47
@@ -39560,6 +39602,8 @@ proxy-groups:
   - 美国(yudou99.com 玉豆分享)_101
   - 德国(yudou99.com 玉豆分享)_23
   - 美国(yudou99.com 玉豆分享)_102
+  - 美国(yudou99.com 玉豆分享)_103
+  - 比利时(yudou99.com 玉豆分享)
   - 美国(yudou99.com 玉豆分享)_104
   - 美国(yudou99.com 玉豆分享)_107
   - 美国(yudou99.com 玉豆分享)_108
@@ -39677,7 +39721,6 @@ proxy-groups:
   - 新西兰  YouTube@小青科学网_8
   - 新西兰  YouTube@小青科学网_2
   - 新西兰  YouTube@小青科学网_9
-  - 美国  YouTube@小青科学网_31
   - 未知  YouTube@小青科学网_24
   - 新西兰  YouTube@小青科学网_3
   - 新西兰  YouTube@小青科学网_4
@@ -39725,6 +39768,7 @@ proxy-groups:
   - 德国  YouTube@小青科学网_3
   - 未知  YouTube@小青科学网_70
   - 加拿大  YouTube@小青科学网_2
+  - 美国  YouTube@小青科学网_8
   - 新加坡  YouTube@小青科学网_11
   - 未知  YouTube@小青科学网_14
   - 美国  YouTube@小青科学网_12
@@ -39750,7 +39794,6 @@ proxy-groups:
   - 瑞士  YouTube@小青科学网_2
   - 德国  YouTube@小青科学网_8
   - 未知  YouTube@小青科学网_49
-  - 未知  YouTube@小青科学网_40
   - 韩国  YouTube@小青科学网_1
   - 未知  YouTube@小青科学网_41
   - YouTube顺丰资源 土耳其_5
@@ -39792,7 +39835,9 @@ proxy-groups:
   - YouTube顺丰资源 美国_88
   - YouTube顺丰资源 美国_89
   - YouTube顺丰资源 Nofound_93
+  - YouTube顺丰资源 俄罗斯_94
   - YouTube顺丰资源 Nofound_98
+  - YouTube顺丰资源 俄罗斯_99
   - YouTube顺丰资源 美国_101
   - YouTube顺丰资源 美国_102
   - YouTube顺丰资源 美国_103
@@ -39906,6 +39951,7 @@ proxy-groups:
   - 荷兰(yudou99.com 玉豆分享)_20
   - 荷兰(yudou99.com 玉豆分享)_21
   - 美国(yudou99.com 玉豆分享)_41
+  - 美国(yudou99.com 玉豆分享)_42
   - 美国(yudou99.com 玉豆分享)_43
   - 美国(yudou99.com 玉豆分享)_44
   - 新加坡(独立思维)
@@ -39953,8 +39999,6 @@ proxy-groups:
   - 荷兰(独立思维)_14
   - 荷兰(独立思维)_15
   - 荷兰(独立思维)_16
-  - 德国(独立思维)_5
-  - 德国(独立思维)_6
   - 德国(独立思维)_7
   - 美国(独立思维)_40
   - 荷兰(独立思维)_18
@@ -39962,6 +40006,7 @@ proxy-groups:
   - 荷兰(独立思维)_20
   - 荷兰(独立思维)_21
   - 美国(独立思维)_41
+  - 美国(独立思维)_42
   - 美国(独立思维)_43
   - 美国(独立思维)_44
   - xiaozhou168.top_4
@@ -40101,7 +40146,6 @@ proxy-groups:
   - xiaozhou168.top_205
   - xiaozhou168.top_206
   - xiaozhou168.top_207
-  - xiaozhou168.top_208
   - xiaozhou168.top_209
   - xiaozhou168.top_210
   - xiaozhou168.top_211
@@ -40115,6 +40159,7 @@ proxy-groups:
   - xiaozhou168.top_228
   - xiaozhou168.top_229
   - xiaozhou168.top_230
+  - xiaozhou168.top_231
   - xiaozhou168.top_232
   - xiaozhou168.top_233
   - YouTube顺丰资源 新西兰_9
@@ -40137,8 +40182,6 @@ proxy-groups:
   - YouTube顺丰资源 美国_41
   - YouTube顺丰资源 美国_43
   - YouTube顺丰资源 巴西_45
-  - YouTube顺丰资源 俄罗斯_46
-  - YouTube顺丰资源 俄罗斯_48
   - YouTube顺丰资源 美国_50
   - YouTube顺丰资源 美国_51
   - YouTube顺丰资源 俄罗斯_60
@@ -40222,6 +40265,7 @@ proxy-groups:
   - 未知  YouTube@小青科学网_6
   - 美国  YouTube@小青科学网_14
   - 加拿大  YouTube@小青科学网_1
+  - 俄罗斯  YouTube@小青科学网
   - 美国  YouTube@小青科学网_8
   - 加拿大  YouTube@小青科学网_2
   - 加拿大  YouTube@小青科学网_3
@@ -40244,11 +40288,9 @@ proxy-groups:
   - 法国  YouTube@小青科学网
   - 荷兰  YouTube@小青科学网_6
   - 荷兰  YouTube@小青科学网_7
-  - 哈萨克斯坦  YouTube@小青科学网
   - 俄罗斯  YouTube@小青科学网_2
   - 荷兰  YouTube@小青科学网_9
   - 西班牙  YouTube@小青科学网
-  - 哈萨克斯坦  YouTube@小青科学网_1
   - 荷兰  YouTube@小青科学网_10
   - 俄罗斯  YouTube@小青科学网_3
   - 荷兰  YouTube@小青科学网_11
@@ -40257,6 +40299,7 @@ proxy-groups:
   - 荷兰  YouTube@小青科学网_14
   - 荷兰  YouTube@小青科学网_16
   - 香港  YouTube@小青科学网_2
+  - 德国  YouTube@小青科学网_1
   - 荷兰  YouTube@小青科学网_18
   - 芬兰  YouTube@小青科学网_5
   - 俄罗斯  YouTube@小青科学网_6
@@ -40298,6 +40341,7 @@ proxy-groups:
   - 德国(独立思维) (3)
   - 美国(独立思维) (42)
   - 英国(独立思维) (2)
+  - 美国(独立思维) (43)
   - 美国(独立思维) (45)
   - 日本(独立思维) (2)
   - 俄罗斯(独立思维)
@@ -40307,7 +40351,6 @@ proxy-groups:
   - 荷兰(独立思维) (10)
   - 美国(独立思维) (50)
   - 美国(独立思维) (51)
-  - 德国(独立思维) (4)
   - 美国(独立思维) (53)
   - 德国(独立思维) (5)
   - 美国(独立思维) (56)
@@ -40318,8 +40361,6 @@ proxy-groups:
   - 美国(独立思维) (60)
   - 德国(独立思维) (6)
   - 德国(独立思维) (7)
-  - 俄罗斯(独立思维) (5)
-  - 俄罗斯(独立思维) (6)
   - 俄罗斯(独立思维) (7)
   - 美国(独立思维) (66)
   - 加拿大(独立思维)
@@ -40338,7 +40379,8 @@ proxy-groups:
   - 阿联酋  YouTube@小青科学网
   - 荷兰  YouTube@小青科学网_4
   - 未知  YouTube@小青科学网_1
-  - 美国  YouTube@小青科学网_12
+  - 荷兰  YouTube@小青科学网_5
+  - 俄罗斯  YouTube@小青科学网_2
   - 波兰  YouTube@小青科学网
   - 荷兰  YouTube@小青科学网_13
   - 瑞典  YouTube@小青科学网_3
@@ -40382,6 +40424,7 @@ proxy-groups:
   - YouTube顺丰资源 美国_65
   - YouTube顺丰资源 德国_71
   - YouTube顺丰资源 美国_74
+  - YouTube顺丰资源 俄罗斯_80
   - YouTube顺丰资源 美国_82
   - YouTube顺丰资源 美国_83
   - YouTube顺丰资源 美国_84
@@ -40468,11 +40511,12 @@ proxy-groups:
   - 美国  YouTube@小青科学网_20
   - 荷兰  YouTube@小青科学网_13
   - 美国  YouTube@小青科学网_30
-  - 美国  YouTube@小青科学网_36
+  - 俄罗斯  YouTube@小青科学网
   - 加拿大  YouTube@小青科学网_5
   - 德国  YouTube@小青科学网_1
   - 美国  YouTube@小青科学网_22
   - 意大利  YouTube@小青科学网_10
+  - 俄罗斯  YouTube@小青科学网_20
   - 美国  YouTube@小青科学网_85
   - 美国  YouTube@小青科学网_16
   - 加拿大  YouTube@小青科学网
@@ -40598,7 +40642,6 @@ proxy-groups:
   - 美国(独立思维) (7)
   - 荷兰(独立思维) (10)
   - 美国(独立思维) (10)
-  - 美国(独立思维) (11)
   - 美国(独立思维) (12)
   - 俄罗斯(独立思维)
   - 美国(独立思维) (15)
@@ -40639,6 +40682,7 @@ proxy-groups:
   - 荷兰(独立思维) (12)
   - 美国(独立思维) (56)
   - 美国(独立思维) (57)
+  - 俄罗斯(独立思维) (9)
   - 美国(独立思维) (58)
   - 加拿大(独立思维)
   - 美国(独立思维) (59)
@@ -40678,7 +40722,6 @@ proxy-groups:
   - 美国  YouTube@小青科学网_33
   - 美国  YouTube@小青科学网_4
   - 瑞士  YouTube@小青科学网_1
-  - 荷兰  YouTube@小青科学网_2
   - 美国  YouTube@小青科学网_51
   - 英国  YouTube@小青科学网_10
   - 韩国  YouTube@小青科学网_1
@@ -40690,9 +40733,13 @@ proxy-groups:
   - 荷兰  YouTube@小青科学网_1
   - 美国  YouTube@小青科学网_7
   - 土耳其  YouTube@小青科学网_7
+  - 德国  YouTube@小青科学网_1
   - 荷兰  YouTube@小青科学网_7
   - 荷兰  YouTube@小青科学网_9
+  - 奥地利  YouTube@小青科学网_3
+  - 瑞士  YouTube@小青科学网
   - 加拿大  YouTube@小青科学网
+  - 奥地利  YouTube@小青科学网_2
   - 芬兰  YouTube@小青科学网
   - 加拿大  YouTube@小青科学网_1
   - 波兰  YouTube@小青科学网
@@ -40700,12 +40747,16 @@ proxy-groups:
   - 土耳其  YouTube@小青科学网_9
   - 土耳其  YouTube@小青科学网_12
   - 美国  YouTube@小青科学网_41
+  - 俄罗斯  YouTube@小青科学网_4
   - 美国  YouTube@小青科学网_43
   - 瑞士  YouTube@小青科学网_4
   - 德国  YouTube@小青科学网_2
   - 英国  YouTube@小青科学网_9
+  - 未知  YouTube@小青科学网_23
   - 未知  YouTube@小青科学网_24
   - 未知  YouTube@小青科学网_27
+  - 奥地利  YouTube@小青科学网
+  - 奥地利  YouTube@小青科学网_1
   - 土耳其  YouTube@小青科学网_2
   - 土耳其  YouTube@小青科学网_3
   - 未知  YouTube@小青科学网_6
@@ -40713,8 +40764,10 @@ proxy-groups:
   - 俄罗斯  YouTube@小青科学网_1
   - 加拿大  YouTube@小青科学网_29
   - 土耳其  YouTube@小青科学网_6
+  - 俄罗斯  YouTube@小青科学网_3
   - 俄罗斯  YouTube@小青科学网_5
   - 荷兰  YouTube@小青科学网_8
+  - 俄罗斯  YouTube@小青科学网_7
   - 未知  YouTube@小青科学网_15
   - 荷兰  YouTube@小青科学网_10
   - 未知  YouTube@小青科学网_16
@@ -40733,7 +40786,6 @@ proxy-groups:
   - YouTube顺丰资源 新西兰_10
   - YouTube顺丰资源 瑞士_12
   - YouTube顺丰资源 俄罗斯_13
-  - YouTube顺丰资源 黎巴嫩_14
   - YouTube顺丰资源 Nofound_15
   - YouTube顺丰资源 新西兰_16
   - YouTube顺丰资源 瑞士_17
@@ -40791,6 +40843,8 @@ proxy-groups:
   - YouTube顺丰资源 美国_199
   - YouTube顺丰资源 美国_200
   - YouTube顺丰资源 巴西_201
+  - YouTube顺丰资源 巴西_202
+  - YouTube顺丰资源 巴西_203
   - YouTube顺丰资源 加拿大_207
   - YouTube顺丰资源 美国_210
   - YouTube顺丰资源 美国_212
@@ -40826,6 +40880,8 @@ proxy-groups:
   - 美国(独立思维) (14)
   - 加拿大(独立思维) (2)
   - 加拿大(独立思维) (3)
+  - 俄罗斯(独立思维)
+  - 俄罗斯(独立思维) (2)
   - 德国(独立思维) (6)
   - 美国(独立思维) (19)
   - 西班牙(独立思维)
@@ -40833,6 +40889,7 @@ proxy-groups:
   - 德国(独立思维) (8)
   - 美国(独立思维) (21)
   - 美国(独立思维) (22)
+  - 俄罗斯(独立思维) (3)
   - 日本(独立思维) (3)
   - 美国(独立思维) (23)
   - 美国(独立思维) (24)
@@ -40869,7 +40926,6 @@ proxy-groups:
   - 日本(独立思维) (4)
   - 美国(独立思维) (54)
   - 俄罗斯(独立思维) (4)
-  - 俄罗斯  YouTube@小青科学网_4
   - 香港  YouTube@小青科学网_2
   - 未知  YouTube@小青科学网_13
   - 美国  YouTube@小青科学网_22
@@ -40964,6 +41020,7 @@ proxy-groups:
   - YouTube顺丰资源 美国_81
   - YouTube顺丰资源 美国_85
   - YouTube顺丰资源 美国_86
+  - YouTube顺丰资源 瑞士_88
   - YouTube顺丰资源 美国_89
   - YouTube顺丰资源 美国_91
   - YouTube顺丰资源 美国_92
@@ -40972,6 +41029,7 @@ proxy-groups:
   - YouTube顺丰资源 美国_96
   - YouTube顺丰资源 丹麦_97
   - YouTube顺丰资源 美国_101
+  - YouTube顺丰资源 巴西_102
   - YouTube顺丰资源 美国_103
   - YouTube顺丰资源 美国_104
   - YouTube顺丰资源 英国_105
@@ -40981,6 +41039,8 @@ proxy-groups:
   - YouTube顺丰资源 美国_115
   - YouTube顺丰资源 美国_116
   - YouTube顺丰资源 美国_119
+  - YouTube顺丰资源 巴西_120
+  - YouTube顺丰资源 巴西_121
   - YouTube顺丰资源 巴西_122
   - YouTube顺丰资源 加拿大_126
   - YouTube顺丰资源 美国_130
@@ -41039,10 +41099,13 @@ proxy-groups:
   - 美国  YouTube@小青科学网_18
   - 德国  YouTube@小青科学网_3
   - 未知  YouTube@小青科学网_8
+  - 荷兰  YouTube@小青科学网_4
   - 新加坡  YouTube@小青科学网
   - 西班牙  YouTube@小青科学网_1
+  - 荷兰  YouTube@小青科学网_5
   - 美国  YouTube@小青科学网_23
   - 新加坡  YouTube@小青科学网_1
+  - 未知  YouTube@小青科学网_13
   - 加拿大  YouTube@小青科学网_16
   - 英国  YouTube@小青科学网
   - 德国  YouTube@小青科学网_2
@@ -41062,7 +41125,6 @@ proxy-groups:
   - YouTube顺丰资源 以色列_8
   - YouTube顺丰资源 新西兰_9
   - YouTube顺丰资源 新西兰_11
-  - YouTube顺丰资源 日本_12
   - YouTube顺丰资源 新西兰_13
   - YouTube顺丰资源 美国_14
   - YouTube顺丰资源 新西兰_15
@@ -41073,12 +41135,13 @@ proxy-groups:
   - YouTube顺丰资源 美国_25
   - YouTube顺丰资源 德国_26
   - YouTube顺丰资源 德国_27
-  - YouTube顺丰资源 日本_28
   - YouTube顺丰资源 西班牙_29
   - YouTube顺丰资源 西班牙_30
   - YouTube顺丰资源 荷兰_31
   - YouTube顺丰资源 以色列_32
   - YouTube顺丰资源 美国_33
+  - YouTube顺丰资源 日本_34
+  - YouTube顺丰资源 Nofound_35
   - YouTube顺丰资源 以色列_36
   - YouTube顺丰资源 西班牙_37
   - YouTube顺丰资源 西班牙_38
@@ -41091,6 +41154,7 @@ proxy-groups:
   - YouTube顺丰资源 巴西_46
   - YouTube顺丰资源 西班牙_47
   - YouTube顺丰资源 西班牙_48
+  - YouTube顺丰资源 美国_49
   - YouTube顺丰资源 西班牙_50
   - YouTube顺丰资源 西班牙_51
   - YouTube顺丰资源 南非_52
@@ -41103,8 +41167,6 @@ proxy-groups:
   - YouTube顺丰资源 伊朗_61
   - YouTube顺丰资源 伊朗_62
   - YouTube顺丰资源 伊朗_64
-  - YouTube顺丰资源 英国_66
-  - YouTube顺丰资源 日本_67
   - YouTube顺丰资源 美国_68
   - YouTube顺丰资源 土耳其_69
   - YouTube顺丰资源 美国_70
@@ -41185,10 +41247,9 @@ proxy-groups:
   - YouTube顺丰资源 美国_208
   - YouTube顺丰资源 美国_209
   - YouTube顺丰资源 美国_210
-  - 🇹🇼_TW_台湾_IPV4
+  - 🇩🇪_DE_德国->🇫🇷_FR_法国_IPV4
   - 🇺🇸_US_美国->🇩🇪_DE_德国_IPV4
   - 🇸🇬_SG_新加坡_IPV4
-  - 🇷🇺_RU_俄罗斯->🇺🇸_US_美国_IPV4
   - 🇸🇬_SG_新加坡_IPV4 (2)
   - 🇯🇵_JP_日本_IPV4
   - 🇺🇸_US_美国_IPV4 (2)
@@ -41197,29 +41258,5 @@ proxy-groups:
   - 🇯🇵_JP_日本_IPV4 (2)
   - 🇯🇵_JP_日本_IPV4 (3)
   - 🇺🇸_US_美国_IPV4 (4)
-  - 🇺🇸_US_美国_IPV4 (5)
-  - 🇸🇬_SG_新加坡_IPV4 (4)
-  - 🇯🇵_JP_日本_IPV4 (4)
-  - 🇺🇸_US_美国_IPV4 (6)
-  - 🇺🇸_US_美国_IPV4 (7)
-  - 🇺🇸_US_美国_IPV4 (8)
-  - 🇺🇸_US_美国_IPV4 (9)
-  - 🇺🇸_US_美国_IPV4 (10)
-  - 🇯🇵_JP_日本_IPV4 (5)
-  - 🇺🇸_US_美国_IPV4 (11)
-  - 🇺🇸_US_美国_IPV4 (12)
-  - 🇸🇨_SC_塞舌尔->🇳🇱_NL_荷兰_IPV4
-  - 🇺🇸 机场推荐:dafei.de 美国 89_IPV4
-  - 🇺🇸_US_美国_IPV4 (13)
-  - '@DeltaKroneckerGithub_3021_IPV4'
-  - 🇦🇪[www.v2nodes.com] vless-AE-1...
-  - 🇧🇾[www.v2nodes.com] vless-BY-1...
-  - '🇧🇾[www.v2nodes.com] vless-BY-1... #1'
-  - '🇸🇬[www.v2nodes.com] vless-SG-7... #1'
-  - '🇨🇦[www.v2nodes.com] vless-CA-1... #2'
-  - '🏳[www.v2nodes.com] vless- #14'
-  - '🇨🇦[www.v2nodes.com] vless-CA-1... #4'
-  - '🇩🇪[www.v2nodes.com] vless-DE-1... #3'
-  - '🏳[www.v2nodes.com] vless- #2'
 rules:
 - MATCH,Auto
