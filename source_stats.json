@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-19T13:45:08Z",
+  "updated_at": "2026-11-20T00:01:18Z",
   "total_sources": 55,
   "success_count": 35,
   "empty_count": 10,
@@ -229,7 +229,7 @@
     {
       "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
       "status": "ok",
-      "count": 2000
+      "count": 2022
     },
     {
       "url": "https://raw.githubusercontent.com/peasoft/No_FDroid/master/subscribe/clash.yml",
