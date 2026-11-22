@@ -42,3 +42,4 @@ https://gist.githubusercontent.com/guidongone/01f4bcd2f270ff1856c1a832a082b5d2/r
 https://drive.google.com/uc?export=download&id=1c1-vFaLLSYRyofYVUeInWAkCEqAd3tDR
 https://gist.githubusercontent.com/guidongone/8e94d5ecfa599d62891d94c26607a1b9/raw/37163c4e5fe6bd6a8c7872d28933a47252addc4d/1122.yaml
 https://drive.google.com/uc?export=download&id=17cPtj3M04HjBfTXl_a0s4HwFaN9AYPIS
+https://gist.githubusercontent.com/meitan16/8a442e6c81f9d5a5519764ca0c8becfb/raw/88e11a86a01ea90939910ab30992b8dbfec5b2e0/nodes.yaml
