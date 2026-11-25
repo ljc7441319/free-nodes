@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-25T01:40:46Z",
-  "total_sources": 59,
+  "updated_at": "2026-11-25T15:12:32Z",
+  "total_sources": 61,
   "success_count": 39,
   "empty_count": 10,
-  "error_count": 10,
+  "error_count": 12,
   "filtered_count": 0,
   "items": [
     {
@@ -18,8 +18,8 @@
     },
     {
       "url": "https://drive.google.com/uc?export=download&id=1zga-C-lVEtGOhq86uCn5GS8lx2wndIHb",
-      "status": "ok",
-      "count": 205
+      "status": "error",
+      "count": 0
     },
     {
       "url": "https://drive.google.com/uc?export=download&id=1hItQM0miZwrQlWO2l1fwUNeQxbJ9wd6B",
@@ -43,8 +43,8 @@
     },
     {
       "url": "https://drive.google.com/uc?export=download&id=1EAyF7HbQqFj2UcQAeJBZx1QW9Crl7N0v",
-      "status": "ok",
-      "count": 200
+      "status": "error",
+      "count": 0
     },
     {
       "url": "https://gist.githubusercontent.com/guidongone/2fb41043e8327b76ab6e3f9cffce3cd2/raw/f57af3af7f83760a3ed3b12001ab408060d33e39/Clash261021.yaml",
@@ -237,6 +237,16 @@
       "count": 196
     },
     {
+      "url": "https://gist.githubusercontent.com/guidongone/a5fab5c5a14f7221b217a6f7944e1b52/raw/628d3bb4e38e044a8968204c244bb1468574583c/1125.yaml",
+      "status": "ok",
+      "count": 34
+    },
+    {
+      "url": "https://drive.google.com/uc?export=download&id=1PRzEgOwzvrreqVMdsAw41r7zkwOebv_z",
+      "status": "ok",
+      "count": 193
+    },
+    {
       "url": "https://paste.to/?14372a45d5d8fbb7#771Xe1zSng91Tx3prCuwVyDeT3hBy9gmsiCBaPDUszb",
       "status": "empty",
       "count": 0
@@ -244,7 +254,7 @@
     {
       "url": "https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml",
       "status": "ok",
-      "count": 372
+      "count": 350
     },
     {
       "url": "https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml",
